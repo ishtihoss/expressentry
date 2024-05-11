@@ -47,9 +47,13 @@ const handler = async (req: Request): Promise<Response> => {
     const embedding = json.data[0].embedding;
     console.log("Embeddings:", embedding);
 
+
+   // Convert embedding array to JSON object correctly
+const embeddingJson = JSON.stringify({ embedding: embedding.map(e => parseFloat(e)) });
+
     console.log("Searching Express Entry chunks...");
     const { data: chunks, error } = await supabaseAdmin.rpc("express_entry_search", {
-      query_embedding: embedding,
+      query_embedding: embeddingJson,
       similarity_threshold: 0.01,
       match_count: matches,
     });

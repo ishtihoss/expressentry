@@ -13,8 +13,8 @@ export enum OpenAIModel {
   };
   
   export type ExpressEntryChunk = {
-    article_title: string;
-    article_url: string;
+    title: string;
+    url: string;
     article_date: string;
     content: string;
     content_length: number;
