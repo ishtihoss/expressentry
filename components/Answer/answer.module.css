@@ -1,0 +1,22 @@
+.answer {
+  display: inline;
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+.answer span {
+  display: inline-block;
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
