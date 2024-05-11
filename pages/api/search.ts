@@ -16,12 +16,16 @@ const handler = async (req: Request): Promise<Response> => {
       matches: number;
     };
 
+    console.log("Request body:", { query, apiKey, matches });
+
     if (!query || !apiKey || !matches) {
+      console.log("Bad request: Missing required parameters");
       return new Response("Bad request", { status: 400 });
     }
 
     const input = query.replace(/\n/g, " ");
 
+    console.log("Fetching embeddings from OpenAI API...");
     const res = await fetch("https://api.openai.com/v1/embeddings", {
       headers: {
         "Content-Type": "application/json",
@@ -41,7 +45,9 @@ const handler = async (req: Request): Promise<Response> => {
 
     const json = await res.json();
     const embedding = json.data[0].embedding;
+    console.log("Embeddings:", embedding);
 
+    console.log("Searching Express Entry chunks...");
     const { data: chunks, error } = await supabaseAdmin.rpc("express_entry_search", {
       query_embedding: embedding,
       similarity_threshold: 0.01,
@@ -49,9 +55,11 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     if (error) {
-      console.error("Error searching express entry chunks:", error);
-      return new Response("Error searching express entry chunks", { status: 500 });
+      console.error("Error searching Express Entry chunks:", error);
+      return new Response("Error searching Express Entry chunks", { status: 500 });
     }
+
+    console.log("Search results:", chunks);
 
     return new Response(JSON.stringify(chunks), {
       headers: {

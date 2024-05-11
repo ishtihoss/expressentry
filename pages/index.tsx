@@ -140,11 +140,6 @@ export default function Home() {
   };
 
   const handleSave = () => {
-    if (apiKey.length !== 51) {
-      alert("Please enter a valid API key.");
-      return;
-    }
-
     localStorage.setItem("EE_KEY", apiKey);
     localStorage.setItem("EE_MATCH_COUNT", matchCount.toString());
 
@@ -240,13 +235,7 @@ export default function Home() {
                       id="apiKey"
                       placeholder="OpenAI API Key"
                       value={apiKey}
-                      onChange={(e) => {
-                        setApiKey(e.target.value);
-
-                        if (e.target.value.length !== 51) {
-                          setShowSettings(true);
-                        }
-                      }}
+                      onChange={(e) => setApiKey(e.target.value)}
                       className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
@@ -269,7 +258,7 @@ export default function Home() {
               )}
             </div>
 
-            {apiKey.length === 51 ? (
+            {apiKey ? (
               <div className="mb-8">
                 <div className="relative">
                   <IconSearch className="absolute top-3 left-3 h-6 w-6 text-gray-400" />

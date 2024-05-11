@@ -10,14 +10,7 @@ export const Answer: React.FC<AnswerProps> = ({ text }) => {
 
   useEffect(() => {
     if (answerRef.current) {
-      answerRef.current.innerHTML = "";
-      const words = text.split(" ");
-      words.forEach((word, index) => {
-        const span = document.createElement("span");
-        span.textContent = word + " ";
-        span.style.animationDelay = `${index * 0.02}s`;
-        answerRef.current?.appendChild(span);
-      });
+      answerRef.current.textContent = text;
     }
   }, [text]);
 
