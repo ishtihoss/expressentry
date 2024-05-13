@@ -51,17 +51,19 @@ const handler = async (req: Request): Promise<Response> => {
    // Convert embedding array to JSON object correctly
 const embeddingJson = JSON.stringify({ embedding: embedding.map(e => parseFloat(e)) });
 
-    console.log("Searching Express Entry chunks...");
-    const { data: chunks, error } = await supabaseAdmin.rpc("express_entry_search", {
-      query_embedding: embeddingJson,
-      similarity_threshold: 0.01,
-      match_count: matches,
-    });
+// pages/api/search.js
 
-    if (error) {
-      console.error("Error searching Express Entry chunks:", error);
-      return new Response("Error searching Express Entry chunks", { status: 500 });
-    }
+console.log("Searching Express Entry chunks...");
+const { data: chunks, error } = await supabaseAdmin.rpc("express_entry_search", {
+  query_embedding: JSON.parse(embeddingJson),
+  similarity_threshold: 0.015,
+  match_count: matches,
+});
+
+if (error) {
+  console.error("Error searching Express Entry chunks:", error.message);
+  return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+}
 
     console.log("Search results:", chunks);
 

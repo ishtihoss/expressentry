@@ -1,15 +1,16 @@
+// pages/index.tsx
 import { Answer } from "@/components/Answer/Answer";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
+import { SearchBar } from "@/components/SearchBar";
+import { SettingsModal } from "@/components/SettingsModal";
 import { ExpressEntryChunk } from "@/types";
-import { IconArrowRight, IconExternalLink, IconSearch } from "@tabler/icons-react";
 import endent from "endent";
 import Head from "next/head";
-import { KeyboardEvent, useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { KeyboardEvent, useEffect, useState } from "react";
 
 export default function Home() {
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const [query, setQuery] = useState<string>("");
   const [chunks, setChunks] = useState<ExpressEntryChunk[]>([]);
   const [answer, setAnswer] = useState<string>("");
@@ -54,11 +55,13 @@ export default function Home() {
 
     setLoading(false);
 
-    inputRef.current?.focus();
-
     return results;
   };
-
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleAnswer();
+    }
+  };
   const handleAnswer = async () => {
     if (!apiKey) {
       alert("Please enter an API key.");
@@ -129,14 +132,6 @@ export default function Home() {
       const chunkValue = decoder.decode(value);
       setAnswer((prev) => prev + chunkValue);
     }
-
-    inputRef.current?.focus();
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleAnswer();
-    }
   };
 
   const handleSave = () => {
@@ -144,7 +139,6 @@ export default function Home() {
     localStorage.setItem("EE_MATCH_COUNT", matchCount.toString());
 
     setShowSettings(false);
-    inputRef.current?.focus();
   };
 
   const handleClear = () => {
@@ -174,110 +168,42 @@ export default function Home() {
     if (EE_MATCH_COUNT) {
       setMatchCount(parseInt(EE_MATCH_COUNT));
     }
-
-    inputRef.current?.focus();
   }, []);
 
   return (
     <>
       <Head>
-        <title>Express Entry Chatbot</title>
+        <title>Express Entry Search Engine</title>
         <meta
           name="description"
-          content={`AI-powered chatbot for Express Entry immigration to Canada.`}
+          content={`AI-powered search engine for Express Entry immigration to Canada.`}
         />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1"
-        />
-        <link
-          rel="icon"
-          href="/favicon.ico"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div className="flex flex-col min-h-screen bg-gray-100">
         <Navbar />
         <main className="flex-grow">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-            <h1 className="text-4xl font-bold mb-8">Express Entry Chatbot</h1>
-            <div className="mb-8">
-              <button
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                onClick={() => setShowSettings(!showSettings)}
-              >
-                {showSettings ? "Hide" : "Show"} Settings
-              </button>
-
-              {showSettings && (
-                <div className="mt-4 max-w-md">
-                  <div className="mb-4">
-                    <label htmlFor="matchCount" className="block text-gray-700 font-bold mb-2">
-                      Passage Count
-                    </label>
-                    <input
-                      type="number"
-                      id="matchCount"
-                      min={1}
-                      max={10}
-                      value={matchCount}
-                      onChange={(e) => setMatchCount(Number(e.target.value))}
-                      className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label htmlFor="apiKey" className="block text-gray-700 font-bold mb-2">
-                      OpenAI API Key
-                    </label>
-                    <input
-                      type="password"
-                      id="apiKey"
-                      placeholder="OpenAI API Key"
-                      value={apiKey}
-                      onChange={(e) => setApiKey(e.target.value)}
-                      className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="flex justify-end space-x-2">
-                    <button
-                      className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
-                      onClick={handleSave}
-                    >
-                      Save
-                    </button>
-                    <button
-                      className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
-                      onClick={handleClear}
-                    >
-                      Clear
-                    </button>
-                  </div>
-                </div>
-              )}
+            <div className="text-center mb-8">
+              <Image
+                src="/logo.png"
+                alt="Express Entry Search Engine Logo"
+                width={150}
+                height={150}
+                className="mx-auto"
+              />
+              <h1 className="text-4xl font-bold mt-4">Express Entry Search Engine</h1>
             </div>
-
             {apiKey ? (
               <div className="mb-8">
-                <div className="relative">
-                  <IconSearch className="absolute top-3 left-3 h-6 w-6 text-gray-400" />
-                  <input
-                    ref={inputRef}
-                    className="w-full pl-12 pr-4 py-3 text-lg text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    type="text"
-                    placeholder="Ask a question about Express Entry..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                  />
-                  <button
-                    className="absolute right-2 top-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                    onClick={handleAnswer}
-                  >
-                    <IconArrowRight className="h-6 w-6" />
-                  </button>
-                </div>
+                <SearchBar
+                  query={query}
+                  onQueryChange={setQuery}
+                  onSearch={handleAnswer}
+                  onKeyDown={handleKeyDown}
+                />
               </div>
             ) : (
               <div className="text-xl text-red-500 mb-8">
@@ -316,7 +242,6 @@ export default function Home() {
                         className="text-blue-500 hover:underline"
                       >
                         {chunk.title}
-                        <IconExternalLink className="inline-block ml-1 h-4 w-4" />
                       </a>
                     </div>
                     <p>{chunk.content}</p>
@@ -336,22 +261,34 @@ export default function Home() {
                         className="text-blue-500 hover:underline"
                       >
                         {chunk.title}
-                        <IconExternalLink className="inline-block ml-1 h-4 w-4" />
                       </a>
                     </div>
                     <p>{chunk.content}</p>
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className="text-xl text-gray-600">
-                Enter a question about Express Entry immigration to Canada and get AI-powered answers!
-              </div>
-            )}
+            ) : null}
           </div>
         </main>
         <Footer />
       </div>
+
+      <SettingsModal
+        show={showSettings}
+        matchCount={matchCount}
+        apiKey={apiKey}
+        onMatchCountChange={setMatchCount}
+        onApiKeyChange={setApiKey}
+        onSave={handleSave}
+        onClear={handleClear}
+      />
+
+      <button
+        className="fixed bottom-4 left-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+        onClick={() => setShowSettings(!showSettings)}
+      >
+        {showSettings ? "Hide" : "Show"} Settings
+      </button>
     </>
   );
 }

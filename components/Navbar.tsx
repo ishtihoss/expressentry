@@ -5,8 +5,8 @@ export const Navbar: FC = () => {
   return (
     <nav className="flex items-center justify-between bg-white py-4 px-8 shadow-md">
       <div className="flex items-center">
-        <a href="https://immigrationai.ca" className="text-xl font-bold text-blue-600 hover:text-blue-800 transition-colors duration-200">
-          ImmigrationAI
+        <a href="https://expressentry.ca" className="text-xl font-bold text-blue-600 hover:text-blue-800 transition-colors duration-200">
+          Express Entry Search Engine
         </a>
       </div>
       <div>
