@@ -105,7 +105,7 @@ export default function Home() {
       throw new Error(answerResponse.statusText);
     }
 
-    const data = answerResponse.body;
+    const data = await answerResponse.json();
 
     if (!data) {
       return;
