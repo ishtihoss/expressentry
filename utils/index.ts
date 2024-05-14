@@ -1,8 +1,12 @@
-import { OpenAIModel } from "@/types";
+import { OpenAIApi, Configuration } from "openai";
 import { createClient } from "@supabase/supabase-js";
 import { createParser, ParsedEvent, ReconnectInterval } from "eventsource-parser";
 
 export const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+
+const openai = new OpenAIApi(new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+}));
 
 const responseCache = new Map<string, string>();
 
@@ -22,35 +26,22 @@ export const OpenAIStream = async (prompt: string) => {
     return stream;
   }
 
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-    },
-    method: "POST",
-    body: JSON.stringify({
-      model: OpenAIModel.DAVINCI_TURBO,
-      messages: [
-        {
-          role: "system",
-          content: "You are a helpful assistant that accurately answers queries related to Express Entry immigration to Canada. Use the provided information to form your answer, but avoid copying word-for-word. Try to use your own words when possible. Keep your answer concise and under 5 sentences. Be accurate, helpful, and clear.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      max_tokens: 150,
-      temperature: 0.2,
-      stream: true,
-    }),
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    console.error("OpenAI API error:", errorText);
-    throw new Error(`OpenAI API returned ${res.status}: ${errorText}`);
-  }
+  const completion = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    messages: [
+      {
+        role: "system",
+        content: "You are a helpful assistant that accurately answers queries related to Express Entry immigration to Canada. Use the provided information to form your answer, but avoid copying word-for-word. Try to use your own words when possible. Keep your answer concise and under 5 sentences. Be accurate, helpful, and clear.",
+      },
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+    max_tokens: 150,
+    temperature: 0.2,
+    stream: true,
+  }, { responseType: "stream" });
 
   let responseText = "";
 
@@ -81,7 +72,7 @@ export const OpenAIStream = async (prompt: string) => {
 
       const parser = createParser(onParse);
 
-      for await (const chunk of res.body as any) {
+      for await (const chunk of completion.data as any) {
         parser.feed(decoder.decode(chunk));
       }
     },
