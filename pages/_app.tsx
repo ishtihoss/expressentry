@@ -32,7 +32,7 @@ export default function App({ Component, pageProps }: AppProps<{}>) {
       <div className="min-h-screen bg-gray-100">
         <header className="bg-white shadow">
           <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold text-gray-900">Express Entry Helper Chatbot</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Express Entry Search Engine</h1>
           </div>
         </header>
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -40,7 +40,7 @@ export default function App({ Component, pageProps }: AppProps<{}>) {
         </main>
         <footer className="bg-white">
           <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
-            &copy; {new Date().getFullYear()} Express Entry Helper Chatbot. All rights reserved.
+            &copy; {new Date().getFullYear()} Express Entry Information Retrieval. All rights reserved.
           </div>
         </footer>
       </div>

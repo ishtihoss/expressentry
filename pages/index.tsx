@@ -18,14 +18,8 @@ export default function Home() {
 
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [matchCount, setMatchCount] = useState<number>(5);
-  const [apiKey, setApiKey] = useState<string>("");
 
   const handleSearch = async () => {
-    if (!apiKey) {
-      alert("Please enter an API key.");
-      return;
-    }
-
     if (!query) {
       alert("Please enter a query.");
       return;
@@ -41,7 +35,7 @@ export default function Home() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ query, apiKey, matches: matchCount })
+      body: JSON.stringify({ query, matches: matchCount })
     });
 
     if (!searchResponse.ok) {
@@ -57,17 +51,14 @@ export default function Home() {
 
     return results;
   };
+
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleAnswer();
     }
   };
-  const handleAnswer = async () => {
-    if (!apiKey) {
-      alert("Please enter an API key.");
-      return;
-    }
 
+  const handleAnswer = async () => {
     if (!query) {
       alert("Please enter a query.");
       return;
@@ -83,7 +74,7 @@ export default function Home() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ query, apiKey, matches: matchCount })
+      body: JSON.stringify({ query, matches: matchCount })
     });
 
     if (!searchResponse.ok) {
@@ -106,7 +97,7 @@ export default function Home() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ prompt, apiKey })
+      body: JSON.stringify({ prompt })
     });
 
     if (!answerResponse.ok) {
@@ -135,17 +126,14 @@ export default function Home() {
   };
 
   const handleSave = () => {
-    localStorage.setItem("EE_KEY", apiKey);
     localStorage.setItem("EE_MATCH_COUNT", matchCount.toString());
 
     setShowSettings(false);
   };
 
   const handleClear = () => {
-    localStorage.removeItem("EE_KEY");
     localStorage.removeItem("EE_MATCH_COUNT");
 
-    setApiKey("");
     setMatchCount(5);
   };
 
@@ -158,12 +146,7 @@ export default function Home() {
   }, [matchCount]);
 
   useEffect(() => {
-    const EE_KEY = localStorage.getItem("EE_KEY");
     const EE_MATCH_COUNT = localStorage.getItem("EE_MATCH_COUNT");
-
-    if (EE_KEY) {
-      setApiKey(EE_KEY);
-    }
 
     if (EE_MATCH_COUNT) {
       setMatchCount(parseInt(EE_MATCH_COUNT));
@@ -196,29 +179,14 @@ export default function Home() {
               />
               <h1 className="text-4xl font-bold mt-4">Express Entry Search Engine</h1>
             </div>
-            {apiKey ? (
-              <div className="mb-8">
-                <SearchBar
-                  query={query}
-                  onQueryChange={setQuery}
-                  onSearch={handleAnswer}
-                  onKeyDown={handleKeyDown}
-                />
-              </div>
-            ) : (
-              <div className="text-xl text-red-500 mb-8">
-                Please enter your{" "}
-                <a
-                  href="https://platform.openai.com/account/api-keys"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline"
-                >
-                  OpenAI API key
-                </a>{" "}
-                in the settings.
-              </div>
-            )}
+            <div className="mb-8">
+              <SearchBar
+                query={query}
+                onQueryChange={setQuery}
+                onSearch={handleAnswer}
+                onKeyDown={handleKeyDown}
+              />
+            </div>
 
             {loading ? (
               <div className="animate-pulse">
@@ -276,9 +244,7 @@ export default function Home() {
       <SettingsModal
         show={showSettings}
         matchCount={matchCount}
-        apiKey={apiKey}
         onMatchCountChange={setMatchCount}
-        onApiKeyChange={setApiKey}
         onSave={handleSave}
         onClear={handleClear}
       />

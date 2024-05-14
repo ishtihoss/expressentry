@@ -45,7 +45,8 @@ const generateAndPopulateChunks = async () => {
       length: chunk.length,
       tokens: chunk.tokens,
       embedding
-    });
+    })
+    .select();
   
   if (error) {
     console.error("Error inserting data:", error);

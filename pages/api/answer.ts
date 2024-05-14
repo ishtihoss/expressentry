@@ -10,16 +10,19 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { prompt, apiKey } = (await req.json()) as {
+    const { prompt } = (await req.json()) as {
       prompt: string;
-      apiKey: string;
     };
 
-    if (!prompt || !apiKey) {
-      return new Response("Bad request", { status: 400 });
+    if (!prompt) {
+      return new Response("Bad request: missing prompt", { status: 400 });
     }
 
-    const stream = await OpenAIStream(prompt, apiKey);
+    const stream = await OpenAIStream(prompt);
+
+    if (!stream) {
+      return new Response("Failed to generate response", { status: 500 });
+    }
 
     return new Response(stream, {
       headers: {
@@ -28,9 +31,13 @@ const handler = async (req: Request): Promise<Response> => {
         Connection: "keep-alive",
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error in /api/answer:", error);
-    return new Response("Internal Server Error", { status: 500 });
+    if (error instanceof Error) {
+      return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
+    } else {
+      return new Response("Internal Server Error", { status: 500 });
+    }
   }
 };
 

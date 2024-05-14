@@ -4,7 +4,7 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        <meta name="description" content="Express Entry Helper Chatbot" />
+        <meta name="description" content="Express Entry Search Engine" />
         <link rel="icon" href="/favicon.ico" />
         <link
           rel="preload"

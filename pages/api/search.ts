@@ -10,15 +10,14 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { query, apiKey, matches } = (await req.json()) as {
+    const { query, matches } = (await req.json()) as {
       query: string;
-      apiKey: string;
       matches: number;
     };
 
-    console.log("Request body:", { query, apiKey, matches });
+    console.log("Request body:", { query, matches });
 
-    if (!query || !apiKey || !matches) {
+    if (!query || !matches) {
       console.log("Bad request: Missing required parameters");
       return new Response("Bad request", { status: 400 });
     }
@@ -29,7 +28,7 @@ const handler = async (req: Request): Promise<Response> => {
     const res = await fetch("https://api.openai.com/v1/embeddings", {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       method: "POST",
       body: JSON.stringify({
@@ -47,23 +46,17 @@ const handler = async (req: Request): Promise<Response> => {
     const embedding = json.data[0].embedding;
     console.log("Embeddings:", embedding);
 
+    console.log("Searching Express Entry chunks...");
+    const { data: chunks, error } = await supabaseAdmin.rpc("express_entry_search", {
+      query_embedding: embedding,
+      similarity_threshold: 0.015,
+      match_count: matches,
+    });
 
-   // Convert embedding array to JSON object correctly
-const embeddingJson = JSON.stringify({ embedding: embedding.map(e => parseFloat(e)) });
-
-// pages/api/search.js
-
-console.log("Searching Express Entry chunks...");
-const { data: chunks, error } = await supabaseAdmin.rpc("express_entry_search", {
-  query_embedding: JSON.parse(embeddingJson),
-  similarity_threshold: 0.015,
-  match_count: matches,
-});
-
-if (error) {
-  console.error("Error searching Express Entry chunks:", error.message);
-  return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { "Content-Type": "application/json" } });
-}
+    if (error) {
+      console.error("Error searching Express Entry chunks:", error.message);
+      return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+    }
 
     console.log("Search results:", chunks);
 

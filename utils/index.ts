@@ -6,7 +6,7 @@ export const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,
 
 const responseCache = new Map<string, string>();
 
-export const OpenAIStream = async (prompt: string, apiKey: string) => {
+export const OpenAIStream = async (prompt: string) => {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
 
@@ -25,7 +25,7 @@ export const OpenAIStream = async (prompt: string, apiKey: string) => {
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     method: "POST",
     body: JSON.stringify({
@@ -46,8 +46,10 @@ export const OpenAIStream = async (prompt: string, apiKey: string) => {
     }),
   });
 
-  if (res.status !== 200) {
-    throw new Error("OpenAI API returned an error");
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error("OpenAI API error:", errorText);
+    throw new Error(`OpenAI API returned ${res.status}: ${errorText}`);
   }
 
   let responseText = "";
@@ -66,13 +68,12 @@ export const OpenAIStream = async (prompt: string, apiKey: string) => {
 
           try {
             const json = JSON.parse(data);
-            const text = json.choices[0].delta.content;
-            if (text) {
-              responseText += text;
-              const queue = encoder.encode(text);
-              controller.enqueue(queue);
-            }
+            const text = json.choices[0].delta?.content || "";
+            responseText += text;
+            const queue = encoder.encode(text);
+            controller.enqueue(queue);
           } catch (e) {
+            console.error("Error parsing OpenAI response:", e);
             controller.error(e);
           }
         }
