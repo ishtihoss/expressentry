@@ -1,12 +1,17 @@
-import { OpenAIApi, Configuration } from "openai";
+import { Configuration, OpenAIApi } from "openai";
 import { createClient } from "@supabase/supabase-js";
 import { createParser, ParsedEvent, ReconnectInterval } from "eventsource-parser";
+import axios from "axios";
 
 export const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
-const openai = new OpenAIApi(new Configuration({
+const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
-}));
+});
+
+const openai = new OpenAIApi(configuration, {
+  adapter: axios.create({ timeout: 60000 }),
+});
 
 const responseCache = new Map<string, string>();
 
@@ -66,14 +71,21 @@ export const OpenAIStream = async (prompt: string) => {
           } catch (e) {
             console.error("Error parsing OpenAI response:", e);
             controller.error(e);
+            controller.close(); // Close the stream in case of an error
           }
         }
       };
 
       const parser = createParser(onParse);
 
-      for await (const chunk of completion.data as any) {
-        parser.feed(decoder.decode(chunk));
+      try {
+        for await (const chunk of completion.data as AsyncIterable<Uint8Array>) {
+          parser.feed(decoder.decode(chunk));
+        }
+      } catch (e) {
+        console.error("Error reading OpenAI stream:", e);
+        controller.error(e);
+        controller.close(); // Close the stream in case of an error
       }
     },
   });
