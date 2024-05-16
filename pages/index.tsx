@@ -183,7 +183,7 @@ export default function Home() {
                 height={150}
                 className="mx-auto"
               />
-              <h1 className="text-4xl font-bold mt-4">Express Entry Search Engine</h1>
+            
             </div>
             <div className="mb-8">
               <SearchBar
