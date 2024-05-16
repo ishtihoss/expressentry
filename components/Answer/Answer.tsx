@@ -1,18 +1,17 @@
-import React, { useEffect, useRef } from "react";
-import styles from "./answer.module.css";
+import React, { useEffect, useState } from 'react';
+import styles from './answer.module.css';
 
-interface AnswerProps {
-  text: string;
-}
-
-export const Answer: React.FC<AnswerProps> = ({ text }) => {
-  const answerRef = useRef<HTMLDivElement>(null);
+export const Answer = ({ text }) => {
+  const [answer, setAnswer] = useState('');
 
   useEffect(() => {
-    if (answerRef.current) {
-      answerRef.current.textContent = text;
-    }
+    setAnswer(text);
   }, [text]);
 
-  return <div ref={answerRef} className={styles.answer} />;
+  return (
+    <div className={styles['answer-container']}>
+      <h2 className={styles['answer-heading']}>Answer:</h2>
+      <p className={styles['answer-text']}>{answer}</p>
+    </div>
+  );
 };

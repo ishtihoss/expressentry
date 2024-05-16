@@ -105,13 +105,12 @@ export default function Home() {
       throw new Error(answerResponse.statusText);
     }
 
-    const data = await answerResponse.json();
+    const data = answerResponse.body;
 
     if (!data) {
+      setLoading(false);
       return;
     }
-
-    setLoading(false);
 
     const reader = data.getReader();
     const decoder = new TextDecoder();
@@ -121,8 +120,15 @@ export default function Home() {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
       const chunkValue = decoder.decode(value);
-      setAnswer((prev) => prev + chunkValue);
+      console.log("Chunk value:", chunkValue);
+      setAnswer((prev) => {
+        const updatedAnswer = prev + chunkValue.replace("Answer:","").trim();
+        console.log("Updated answer:", updatedAnswer);
+        return updatedAnswer;
+      });
     }
+
+    setLoading(false);
   };
 
   const handleSave = () => {

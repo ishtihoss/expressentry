@@ -5,23 +5,14 @@ import { createClient } from '@supabase/supabase-js';
 export const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
 // Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const responseCache = new Map<string, string>();
 
-export const OpenAIStream = async (prompt: string): Promise<ReadableStream> => {
+export const OpenAIStream = async (prompt: string): Promise<string> => {
   // Check if the response is already cached
   if (responseCache.has(prompt)) {
-    const cachedResponse = responseCache.get(prompt)!; // Non-null assertion since we checked the existence
-    const encoder = new TextEncoder();
-    return new ReadableStream({
-      start(controller) {
-        controller.enqueue(encoder.encode(cachedResponse));
-        controller.close();
-      },
-    });
+    return responseCache.get(prompt)!; // Non-null assertion since we checked the existence
   }
 
   try {
@@ -41,30 +32,20 @@ export const OpenAIStream = async (prompt: string): Promise<ReadableStream> => {
       temperature: 0.2,
     });
 
-    if (completion.choices.length === 0) {
+    if (!completion || !completion.choices || completion.choices.length === 0) {
       throw new Error('No completion choices returned from OpenAI API');
     }
 
     const responseText = completion.choices[0]?.message?.content?.trim() || '';
     responseCache.set(prompt, responseText);
 
-    const encoder = new TextEncoder();
-    return new ReadableStream({
-      start(controller) {
-        controller.enqueue(encoder.encode(responseText));
-        controller.close();
-      },
-    });
+    console.log('OpenAI API Response:', responseText); // logging the response to the console
+
+    return responseText;
   } catch (error) {
     console.error('Error in OpenAIStream:', error);
-    // Handling the error by returning a stream with an error message
-    const encoder = new TextEncoder();
-    return new ReadableStream({
-      start(controller) {
-        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-        controller.enqueue(encoder.encode(`Error: ${errorMessage}`));
-        controller.close();
-      },
-    });
+    // Handling the error by returning an error message
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    return `Error: ${errorMessage}`;
   }
 };

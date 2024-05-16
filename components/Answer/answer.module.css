@@ -10,6 +10,23 @@
   animation: fadeInUp 0.5s ease-out forwards;
 }
 
+.answer-container {
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.answer-heading {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.answer-text {
+  font-size: 18px;
+  line-height: 1.5;
+}
+
 @keyframes fadeInUp {
   0% {
     opacity: 0;

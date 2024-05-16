@@ -44,7 +44,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const json = await res.json();
     const embedding = json.data[0].embedding;
-    console.log("Embeddings:", embedding);
+    
 
     console.log("Searching Express Entry chunks...");
     const { data: chunks, error } = await supabaseAdmin.rpc("express_entry_search", {
