@@ -14,7 +14,6 @@ export const Answer: React.FC<AnswerProps> = ({ text }) => {
 
   return (
     <div className={styles['answer-container']}>
-      <h2 className={styles['answer-heading']}>Answer:</h2>
       <p className={styles['answer-text']}>{answer}</p>
     </div>
   );
