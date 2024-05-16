@@ -162,7 +162,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Express Entry Search Engine</title>
+        
         <meta
           name="description"
           content={`AI-powered search engine for Express Entry immigration to Canada.`}
