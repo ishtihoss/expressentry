@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styles from './answer.module.css';
 
-export const Answer = ({ text }) => {
-  const [answer, setAnswer] = useState('');
+interface AnswerProps {
+  text: string;
+}
+
+export const Answer: React.FC<AnswerProps> = ({ text }) => {
+  const [answer, setAnswer] = useState<string>('');
 
   useEffect(() => {
     setAnswer(text);
