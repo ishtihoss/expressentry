@@ -3,6 +3,7 @@ import { Inter } from "@next/font/google";
 import type { AppProps } from "next/app";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import Head from 'next/head'; // Import Head
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
@@ -24,6 +25,9 @@ export default function App({ Component, pageProps }: AppProps<{}>) {
 
   return (
     <>
+      <Head>
+        <title>Express Entry Search Engine</title> {/* Set the default site-wide title */}
+      </Head>
       <style jsx global>{`
         html {
           font-family: ${inter.style.fontFamily};
