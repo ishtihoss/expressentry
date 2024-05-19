@@ -1,8 +1,8 @@
 // pages/index.tsx
-import { Answer } from "@/components/Answer/Answer";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { SearchBar } from "@/components/SearchBar";
+import { SearchResults } from "@/components/SearchResults";
 import { SettingsModal } from "@/components/SettingsModal";
 import { ExpressEntryChunk } from "@/types";
 import endent from "endent";
@@ -18,39 +18,6 @@ export default function Home() {
 
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [matchCount, setMatchCount] = useState<number>(5);
-
-  const handleSearch = async () => {
-    if (!query) {
-      alert("Please enter a query.");
-      return;
-    }
-
-    setAnswer("");
-    setChunks([]);
-
-    setLoading(true);
-
-    const searchResponse = await fetch("/api/search", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ query, matches: matchCount })
-    });
-
-    if (!searchResponse.ok) {
-      setLoading(false);
-      throw new Error(searchResponse.statusText);
-    }
-
-    const results: ExpressEntryChunk[] = await searchResponse.json();
-
-    setChunks(results);
-
-    setLoading(false);
-
-    return results;
-  };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -199,56 +166,9 @@ export default function Home() {
                 <div className="h-4 bg-gray-300 rounded w-1/3 mb-4"></div>
                 <div className="h-4 bg-gray-300 rounded w-2/3 mb-4"></div>
               </div>
-            ) : answer ? (
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-4">Answer</h2>
-                <Answer text={answer} />
-
-                <h2 className="text-2xl font-bold mt-8 mb-4">
-                  Relevant Passages
-                </h2>
-                {chunks.map((chunk, index) => (
-                  <div
-                    key={index}
-                    className="mb-4 p-4 bg-white rounded-md shadow"
-                  >
-                    <div className="mb-2">
-                      <a
-                        href={chunk.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline"
-                      >
-                        {chunk.title}
-                      </a>
-                    </div>
-                    <p>{chunk.content}</p>
-                  </div>
-                ))}
-              </div>
-            ) : chunks.length > 0 ? (
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-4">Relevant Passages</h2>
-                {chunks.map((chunk, index) => (
-                  <div
-                    key={index}
-                    className="mb-4 p-4 bg-white rounded-md shadow"
-                  >
-                    <div className="mb-2">
-                      <a
-                        href={chunk.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline"
-                      >
-                        {chunk.title}
-                      </a>
-                    </div>
-                    <p>{chunk.content}</p>
-                  </div>
-                ))}
-              </div>
-            ) : null}
+            ) : (
+              <SearchResults chunks={chunks} answer={answer} />
+            )}
           </div>
         </main>
         <Footer />
