@@ -7,11 +7,8 @@ export default function Document() {
         <meta name="description" content="Express Entry Search Engine" />
         <link rel="icon" href="/favicon.ico" />
         <link
-          rel="preload"
-          href="/fonts/inter-var-latin.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+          rel="stylesheet"
         />
       </Head>
       <body>

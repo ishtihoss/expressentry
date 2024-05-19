@@ -122,7 +122,7 @@ export default function Home() {
       const chunkValue = decoder.decode(value);
       console.log("Chunk value:", chunkValue);
       setAnswer((prev) => {
-        const updatedAnswer = prev + chunkValue.replace("Answer:","").trim();
+        const updatedAnswer = prev + chunkValue.replace("Answer:", "").trim();
         console.log("Updated answer:", updatedAnswer);
         return updatedAnswer;
       });
@@ -162,7 +162,6 @@ export default function Home() {
   return (
     <>
       <Head>
-        
         <meta
           name="description"
           content={`AI-powered search engine for Express Entry immigration to Canada.`}
@@ -173,7 +172,7 @@ export default function Home() {
 
       <div className="flex flex-col min-h-screen bg-gray-100">
         <Navbar />
-        <main className="flex-grow">
+        <main className="flex-grow p-4">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
             <div className="text-center mb-8">
               <Image
@@ -183,7 +182,6 @@ export default function Home() {
                 height={150}
                 className="mx-auto"
               />
-            
             </div>
             <div className="mb-8">
               <SearchBar
@@ -191,6 +189,7 @@ export default function Home() {
                 onQueryChange={setQuery}
                 onSearch={handleAnswer}
                 onKeyDown={handleKeyDown}
+                className="search-bar"
               />
             </div>
 
@@ -205,9 +204,14 @@ export default function Home() {
                 <h2 className="text-2xl font-bold mb-4">Answer</h2>
                 <Answer text={answer} />
 
-                <h2 className="text-2xl font-bold mt-8 mb-4">Relevant Passages</h2>
+                <h2 className="text-2xl font-bold mt-8 mb-4">
+                  Relevant Passages
+                </h2>
                 {chunks.map((chunk, index) => (
-                  <div key={index} className="mb-4 p-4 bg-white rounded-md shadow">
+                  <div
+                    key={index}
+                    className="mb-4 p-4 bg-white rounded-md shadow"
+                  >
                     <div className="mb-2">
                       <a
                         href={chunk.url}
@@ -226,7 +230,10 @@ export default function Home() {
               <div className="mb-8">
                 <h2 className="text-2xl font-bold mb-4">Relevant Passages</h2>
                 {chunks.map((chunk, index) => (
-                  <div key={index} className="mb-4 p-4 bg-white rounded-md shadow">
+                  <div
+                    key={index}
+                    className="mb-4 p-4 bg-white rounded-md shadow"
+                  >
                     <div className="mb-2">
                       <a
                         href={chunk.url}
@@ -256,7 +263,7 @@ export default function Home() {
       />
 
       <button
-        className="fixed bottom-4 left-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+        className="fixed bottom-4 left-4 btn btn-primary"
         onClick={() => setShowSettings(!showSettings)}
       >
         {showSettings ? "Hide" : "Show"} Settings
