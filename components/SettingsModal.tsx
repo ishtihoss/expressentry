@@ -32,19 +32,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             max={10}
             value={matchCount}
             onChange={(e) => onMatchCountChange(Number(e.target.value))}
-            className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="search-bar w-full"
           />
         </div>
 
         <div className="flex justify-end space-x-2">
           <button
-            className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+            className="btn btn-primary transition-fast"
             onClick={onSave}
           >
             Save
           </button>
           <button
-            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+            className="btn btn-secondary transition-fast"
             onClick={onClear}
           >
             Clear
