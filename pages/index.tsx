@@ -8,7 +8,7 @@ import { ExpressEntryChunk } from "@/types";
 import endent from "endent";
 import Head from "next/head";
 import Image from "next/image";
-import { KeyboardEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [query, setQuery] = useState<string>("");
@@ -19,14 +19,13 @@ export default function Home() {
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [matchCount, setMatchCount] = useState<number>(5);
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleAnswer();
-    }
+  const handleSearch = async (searchQuery: string) => {
+    setQuery(searchQuery);
+    await handleAnswer(searchQuery);
   };
 
-  const handleAnswer = async () => {
-    if (!query) {
+  const handleAnswer = async (searchQuery: string) => {
+    if (!searchQuery) {
       alert("Please enter a query.");
       return;
     }
@@ -41,7 +40,7 @@ export default function Home() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ query, matches: matchCount })
+      body: JSON.stringify({ query: searchQuery, matches: matchCount })
     });
 
     if (!searchResponse.ok) {
@@ -54,7 +53,7 @@ export default function Home() {
     setChunks(results);
 
     const prompt = endent`
-    Use the following passages to provide an answer to the query: "${query}"
+    Use the following passages to provide an answer to the query: "${searchQuery}"
 
     ${results?.map((d: any) => d.content).join("\n\n")}
     `;
@@ -151,13 +150,7 @@ export default function Home() {
               />
             </div>
             <div className="mb-8">
-              <SearchBar
-                query={query}
-                onQueryChange={setQuery}
-                onSearch={handleAnswer}
-                onKeyDown={handleKeyDown}
-                className="search-bar"
-              />
+              <SearchBar onSearch={handleSearch} />
             </div>
 
             {loading ? (
