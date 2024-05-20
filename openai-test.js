@@ -1,42 +1,36 @@
-require('dotenv').config();
-const { OpenAI } = require('openai');
-const { createClient } = require('@supabase/supabase-js');
+const { Configuration, OpenAIApi } = require('openai');
 
-// Initialize Supabase client
-const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
-
-// Initialize OpenAI client
-const openai = new OpenAI({
+const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-async function testOpenAI() {
-  try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a helpful assistant...',
-        },
-        {
-          role: 'user',
-          content: 'What is Express Entry?',
-        },
-      ],
-      max_tokens: 150,
-      temperature: 0.2,
-    });
+const openai = new OpenAIApi(configuration);
 
-    if (completion.choices.length === 0) {
-      throw new Error('No completion choices returned from OpenAI API');
+async function main() {
+  const response = await openai.createChatCompletion({
+    model: 'gpt-3.5-turbo',
+    messages: [{ role: 'user', content: 'Say this is a test' }],
+    stream: true,
+  }, { responseType: 'stream' });
+
+  const stream = response.data;
+
+  stream.on('data', (chunk) => {
+    const lines = chunk.toString().split('\n').filter(line => line.trim() !== '');
+    for (const line of lines) {
+      const message = line.replace(/^data: /, '');
+      if (message === '[DONE]') {
+        stream.destroy();
+        return;
+      }
+      const parsed = JSON.parse(message);
+      process.stdout.write(parsed.choices[0].delta.content || '');
     }
+  });
 
-    const responseText = completion.choices[0].message.content.trim();
-    console.log('Test Result:', responseText);
-  } catch (error) {
-    console.error('Error in testOpenAI:', error);
-  }
+  stream.on('end', () => {
+    process.stdout.write('\n');
+  });
 }
 
-testOpenAI();
+main();
