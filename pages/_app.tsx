@@ -4,6 +4,7 @@ import type { AppProps } from "next/app";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from 'next/head'; // Import Head
+import 'tailwindcss/tailwind.css';
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
