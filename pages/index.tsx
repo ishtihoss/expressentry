@@ -11,12 +11,14 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
+type Stream = 'FSWP' | 'FSTP' | 'CEC' | 'PNP';
+
 const ExpressEntryChecklist = () => {
-  const [selectedStream, setSelectedStream] = useState('');
+  const [selectedStream, setSelectedStream] = useState<Stream | ''>('');
 
-  const streams = ['FSWP', 'FSTP', 'CEC', 'PNP'];
+  const streams: Stream[] = ['FSWP', 'FSTP', 'CEC', 'PNP'];
 
-  const checklists = {
+  const checklists: Record<Stream, string[]> = {
     FSWP: [
       'Passport or travel document',
       'Language test results',
@@ -81,7 +83,7 @@ const ExpressEntryChecklist = () => {
     ],
   };
 
-  const handleStreamClick = (stream: string) => {
+  const handleStreamClick = (stream: Stream) => {
     setSelectedStream(stream);
   };
 
