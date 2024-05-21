@@ -81,7 +81,7 @@ const ExpressEntryChecklist = () => {
     ],
   };
 
-  const handleStreamClick = (stream) => {
+  const handleStreamClick = (stream: string) => {
     setSelectedStream(stream);
   };
 
