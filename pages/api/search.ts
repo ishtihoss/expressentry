@@ -11,15 +11,15 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { query, matches } = (await req.json()) as {
-    console.log('Request body:', { query, matches });
+    const body = await req.json() as {
       query: string;
       matches: number;
     };
 
-    console.log("Request body:", { query, matches });
+    const { query, matches } = body;
+    console.log('Request body:', { query, matches });
 
-    if (!query || !matches) {
+    if (!query || matches === undefined) {
       console.log("Bad request: Missing required parameters");
       return new Response("Bad request", { status: 400 });
     }
@@ -28,7 +28,6 @@ const handler = async (req: Request): Promise<Response> => {
     console.log('Input:', input);
 
     console.log("Fetching embeddings from OpenAI API...");
-    console.log('Fetching embeddings from OpenAI API...');
     const res = await fetch("https://api.openai.com/v1/embeddings", {
       headers: {
         "Content-Type": "application/json",
@@ -50,9 +49,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log('Embeddings response:', json);
     const embedding = json.data[0].embedding;
     
-
     console.log("Searching Express Entry chunks...");
-    console.log('Searching Express Entry chunks...');
     const { data: chunks, error } = await supabaseAdmin.rpc("express_entry_search", {
       query_embedding: embedding,
       similarity_threshold: 0.015,
@@ -74,9 +71,12 @@ const handler = async (req: Request): Promise<Response> => {
     });
   } catch (error) {
     console.error("Error in /api/search:", error);
-    return new Response("Internal Server Error", { status: 500 });
+    if (error instanceof Error) {
+      return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
+    } else {
+      return new Response("Internal Server Error", { status: 500 });
+    }
   }
 };
 
 export default handler;
-
