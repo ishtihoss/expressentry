@@ -5,12 +5,14 @@ export const config = {
 };
 
 const handler = async (req: Request): Promise<Response> => {
+  console.log('Entering pages/api/search.ts handler');
   if (req.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
   }
 
   try {
     const { query, matches } = (await req.json()) as {
+    console.log('Request body:', { query, matches });
       query: string;
       matches: number;
     };
@@ -23,8 +25,10 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const input = query.replace(/\n/g, " ");
+    console.log('Input:', input);
 
     console.log("Fetching embeddings from OpenAI API...");
+    console.log('Fetching embeddings from OpenAI API...');
     const res = await fetch("https://api.openai.com/v1/embeddings", {
       headers: {
         "Content-Type": "application/json",
@@ -43,10 +47,12 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const json = await res.json();
+    console.log('Embeddings response:', json);
     const embedding = json.data[0].embedding;
     
 
     console.log("Searching Express Entry chunks...");
+    console.log('Searching Express Entry chunks...');
     const { data: chunks, error } = await supabaseAdmin.rpc("express_entry_search", {
       query_embedding: embedding,
       similarity_threshold: 0.015,

@@ -1,0 +1,58 @@
+.
+ |.env
+ |.eslintrc.json
+ |.git
+ |.gitignore
+ |.next
+ |.vercel
+ | |project.json
+ | |README.txt
+ |components
+ | |Answer
+ | | |answer.module.css
+ | | |Answer.tsx
+ | |Footer.tsx
+ | |Navbar.tsx
+ | |SearchBar.tsx
+ | |SearchResults.tsx
+ | |SettingsModal.tsx
+ |express_entry_data.json
+ |generate_tree.sh
+ |license
+ |next-env.d.ts
+ |next.config.js
+ |node_modules
+ |openai-test.js
+ |package-lock.json
+ |package.json
+ |pages
+ | |api
+ | | |answer.ts
+ | | |save-query.ts
+ | | |search.ts
+ | |index.tsx
+ | |_app.tsx
+ | |_document.tsx
+ |populate_chunks.js
+ |postcss.config.js
+ |public
+ | |favicon.ico
+ | |logo.png
+ |README.md
+ |requirements.txt
+ |schema.sql
+ |scripts
+ | |embed.ts
+ | |scraper.py
+ |stream-test2.js
+ |streaming-test.js
+ |styles
+ | |globals.css
+ |tailwind.config.js
+ |tree.txt
+ |tsconfig.json
+ |tsconfig.tsbuildinfo
+ |types
+ | |index.ts
+ |utils
+ | |index.ts

@@ -1,0 +1,321 @@
+==================================================
+File: .env
+==================================================
+OPENAI_API_KEY=sk-proj-BNpaJEOfJlwq11EMPd2OT3BlbkFJnwhLM3Gv5xAwoNaF9F4z
+NEXT_PUBLIC_SUPABASE_URL=https://cysucucevfhlzdcsasfw.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5c3VjdWNldmZobHpkY3Nhc2Z3Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxNjM4NTgyOCwiZXhwIjoyMDMxOTYxODI4fQ.zyk-gGH2dCrXBBdMW75lufw9JyevoWkFCYA_LZrMGFg
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5c3VjdWNldmZobHpkY3Nhc2Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTYzODU4MjgsImV4cCI6MjAzMTk2MTgyOH0.qb6b17BCTx5hY9Cz1HN7Aq3BfKxpFEjeAbYQpudWVy4
+
+==================================================
+File: pages/api/answer.ts
+==================================================
+import { OpenAIStream } from "@/utils";
+
+export const config = {
+  runtime: "edge",
+};
+
+const handler = async (req: Request): Promise<Response> => {
+  if (req.method !== "POST") {
+    return new Response("Method not allowed", { status: 405 });
+  }
+
+  try {
+    const { prompt } = (await req.json()) as {
+      prompt: string;
+    };
+
+    if (!prompt) {
+      return new Response("Bad request: missing prompt", { status: 400 });
+    }
+
+    const stream = await OpenAIStream(prompt);
+
+    if (!stream) {
+      return new Response("Failed to generate response", { status: 500 });
+    }
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
+      },
+    });
+  } catch (error: unknown) {
+    console.error("Error in /api/answer:", error);
+    if (error instanceof Error) {
+      return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
+    } else {
+      return new Response("Internal Server Error", { status: 500 });
+    }
+  }
+};
+
+export default handler;
+
+==================================================
+File: pages/api/save-query.ts
+==================================================
+// pages/api/save-query.ts
+import { NextApiRequest, NextApiResponse } from "next";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+console.log("Supabase URL:", supabaseUrl);
+console.log("Supabase Anon Key:", supabaseKey);
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error("Missing Supabase URL or anon key");
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method === "POST") {
+    const { query } = req.body;
+    console.log("Received query:", query);
+
+    if (!query) {
+      return res.status(400).json({ message: "Query is required" });
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("user_queries")
+        .insert({ query });
+
+      if (error) {
+        console.error("Error saving query:", error);
+        return res.status(500).json({ message: "Error saving query" });
+      }
+
+      console.log("Query saved successfully");
+      return res.status(200).json({ message: "Query saved successfully" });
+    } catch (error) {
+      console.error("Error saving query:", error);
+      return res.status(500).json({ message: "Error saving query" });
+    }
+  } else {
+    return res.status(405).json({ message: "Method not allowed" });
+  }
+}
+
+==================================================
+File: pages/api/search.ts
+==================================================
+import { supabaseAdmin } from "@/utils";
+
+export const config = {
+  runtime: "edge",
+};
+
+const handler = async (req: Request): Promise<Response> => {
+  if (req.method !== "POST") {
+    return new Response("Method not allowed", { status: 405 });
+  }
+
+  try {
+    const { query, matches } = (await req.json()) as {
+      query: string;
+      matches: number;
+    };
+
+    console.log("Request body:", { query, matches });
+
+    if (!query || !matches) {
+      console.log("Bad request: Missing required parameters");
+      return new Response("Bad request", { status: 400 });
+    }
+
+    const input = query.replace(/\n/g, " ");
+
+    console.log("Fetching embeddings from OpenAI API...");
+    const res = await fetch("https://api.openai.com/v1/embeddings", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      method: "POST",
+      body: JSON.stringify({
+        model: "text-embedding-ada-002",
+        input,
+      }),
+    });
+
+    if (!res.ok) {
+      console.error("Error fetching embeddings:", res.statusText);
+      return new Response("Error fetching embeddings", { status: 500 });
+    }
+
+    const json = await res.json();
+    const embedding = json.data[0].embedding;
+    
+
+    console.log("Searching Express Entry chunks...");
+    const { data: chunks, error } = await supabaseAdmin.rpc("express_entry_search", {
+      query_embedding: embedding,
+      similarity_threshold: 0.015,
+      match_count: matches,
+    });
+
+    if (error) {
+      console.error("Error searching Express Entry chunks:", error.message);
+      return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+    }
+
+    console.log("Search results:", chunks);
+
+    return new Response(JSON.stringify(chunks), {
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+      },
+    });
+  } catch (error) {
+    console.error("Error in /api/search:", error);
+    return new Response("Internal Server Error", { status: 500 });
+  }
+};
+
+export default handler;
+
+==================================================
+File: utils/index.ts
+==================================================
+import { OpenAI } from 'openai';
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client
+export const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+
+// Initialize OpenAI client
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const responseCache = new Map<string, string>();
+
+export const OpenAIStream = async (prompt: string): Promise<string> => {
+  // Check if the response is already cached
+  if (responseCache.has(prompt)) {
+    return responseCache.get(prompt)!; // Non-null assertion since we checked the existence
+  }
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a helpful assistant that accurately answers queries related to Express Entry immigration to Canada. Search the web for answers, but avoid copying word-for-word. Provide high quality reference links when possible. Keep your answer concise and under 5 sentences. Be accurate, helpful, and clear.',
+        },
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      max_tokens: 150,
+      temperature: 0.2,
+    });
+
+    if (!completion || !completion.choices || completion.choices.length === 0) {
+      throw new Error('No completion choices returned from OpenAI API');
+    }
+
+    const responseText = completion.choices[0]?.message?.content?.trim() || '';
+    responseCache.set(prompt, responseText);
+
+    console.log('OpenAI API Response:', responseText); // logging the response to the console
+
+    return responseText;
+  } catch (error) {
+    console.error('Error in OpenAIStream:', error);
+    // Handling the error by returning an error message
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    return `Error: ${errorMessage}`;
+  }
+};
+
+==================================================
+File: components/Answer/Answer.tsx
+==================================================
+import React, { useEffect, useState } from 'react';
+import styles from './answer.module.css';
+
+interface AnswerProps {
+  text: string;
+}
+
+export const Answer: React.FC<AnswerProps> = ({ text }) => {
+  const [answer, setAnswer] = useState<string>('');
+
+  useEffect(() => {
+    setAnswer(text);
+  }, [text]);
+
+  return (
+    <div className={styles['answer-container']}>
+      <p className={styles['answer-text']}>{answer}</p>
+    </div>
+  );
+};
+
+==================================================
+File: components/SearchResults.tsx
+==================================================
+// components/SearchResults.tsx
+import { ExpressEntryChunk } from "@/types";
+import { Answer } from "@/components/Answer/Answer";
+
+interface SearchResultsProps {
+  chunks: ExpressEntryChunk[];
+  answer: string;
+}
+
+export const SearchResults: React.FC<SearchResultsProps> = ({ chunks, answer }) => {
+  if (answer) {
+    return (
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Answer</h2>
+        <Answer text={answer} />
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">Relevant Passages</h2>
+        {chunks.map((chunk, index) => (
+          <div key={index} className="mb-4 p-4 bg-white rounded-md shadow">
+            <div className="mb-2">
+              <a href={chunk.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                {chunk.title}
+              </a>
+            </div>
+            <p>{chunk.content}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (chunks.length > 0) {
+    return (
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Relevant Passages</h2>
+        {chunks.map((chunk, index) => (
+          <div key={index} className="mb-4 p-4 bg-white rounded-md shadow">
+            <div className="mb-2">
+              <a href={chunk.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                {chunk.title}
+              </a>
+            </div>
+            <p>{chunk.content}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return null;
+};
+

@@ -10,12 +10,14 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const responseCache = new Map<string, string>();
 
 export const OpenAIStream = async (prompt: string): Promise<string> => {
+  console.log('Entering OpenAIStream function');
   // Check if the response is already cached
   if (responseCache.has(prompt)) {
     return responseCache.get(prompt)!; // Non-null assertion since we checked the existence
   }
 
   try {
+    console.log('Calling OpenAI API with prompt:', prompt);
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [

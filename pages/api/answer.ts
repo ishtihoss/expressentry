@@ -5,6 +5,7 @@ export const config = {
 };
 
 const handler = async (req: Request): Promise<Response> => {
+  console.log('Entering pages/api/answer.ts handler');
   if (req.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
   }

@@ -14,12 +14,14 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+console.log('Entering pages/api/save-query.ts handler');
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
     const { query } = req.body;
+    console.log('Received query:', query);
     console.log("Received query:", query);
 
     if (!query) {
