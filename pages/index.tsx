@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { SearchBar } from "@/components/SearchBar";
 import { SearchResults } from "@/components/SearchResults";
+import { SettingsModal } from "@/components/SettingsModal";
 import ExpressEntryChecklist from "@/components/ExpressEntryChecklist";
 import { ExpressEntryChunk } from "@/types";
 import endent from "endent";
@@ -33,6 +34,7 @@ export default function Home() {
   const [answer, setAnswer] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [showSettings, setShowSettings] = useState<boolean>(false);
   const [matchCount, setMatchCount] = useState<number>(5);
 
   const handleSearch = async (searchQuery: string) => {
@@ -116,6 +118,16 @@ export default function Home() {
     }
   };
 
+  const handleSave = () => {
+    localStorage.setItem("EE_MATCH_COUNT", matchCount.toString());
+    setShowSettings(false);
+  };
+
+  const handleClear = () => {
+    localStorage.removeItem("EE_MATCH_COUNT");
+    setMatchCount(5);
+  };
+
   useEffect(() => {
     if (matchCount > 10) {
       setMatchCount(10);
@@ -172,6 +184,21 @@ export default function Home() {
         </main>
         <Footer />
       </div>
+
+      <SettingsModal
+        show={showSettings}
+        matchCount={matchCount}
+        onMatchCountChange={setMatchCount}
+        onSave={handleSave}
+        onClear={handleClear}
+      />
+
+      <button
+        className="fixed bottom-4 left-4 btn btn-primary"
+        onClick={() => setShowSettings(!showSettings)}
+      >
+        {showSettings ? "Hide" : "Show"} Settings
+      </button>
     </>
   );
 }
