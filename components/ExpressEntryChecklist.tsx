@@ -1,11 +1,13 @@
 // components/ExpressEntryChecklist.tsx
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { FaClipboardList } from "react-icons/fa";
 
 type Stream = 'FSWP' | 'FSTP' | 'CEC' | 'PNP';
 
 const ExpressEntryChecklist = () => {
   const [selectedStream, setSelectedStream] = useState<Stream | ''>('');
+  const [isOpen, setIsOpen] = useState(false);
 
   const streams: Stream[] = ['FSWP', 'FSTP', 'CEC', 'PNP'];
 
@@ -78,9 +80,14 @@ const ExpressEntryChecklist = () => {
     setSelectedStream(stream);
   };
 
+  const toggleChecklist = () => {
+    setIsOpen(!isOpen);
+  };
+
   const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
+    exit: { opacity: 0, scale: 0.8, transition: { duration: 0.3 } },
   };
 
   const buttonVariants = {
@@ -89,52 +96,68 @@ const ExpressEntryChecklist = () => {
   };
 
   const checklistVariants = {
-    hidden: { opacity: 0, x: -50 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.5, delay: 0.2 } },
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3, delay: 0.1 } },
   };
 
   return (
-    <motion.div
-      className="container mx-auto"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      <h1 className="text-2xl font-bold mb-4 text-primary">Express Entry Checklist</h1>
-      <div className="flex justify-center mb-8">
-        {streams.map((stream) => (
-          <motion.button
-            key={stream}
-            className={`px-4 py-2 rounded-md ${
-              selectedStream === stream ? 'bg-primary text-white' : 'bg-background'
-            }`}
-            onClick={() => handleStreamClick(stream)}
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
+    <>
+      <motion.button
+        className="fixed bottom-8 right-8 bg-primary text-white rounded-full p-4 shadow-lg focus:outline-none"
+        onClick={toggleChecklist}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+      >
+        <FaClipboardList size={24} />
+      </motion.button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="fixed bottom-20 right-8 bg-white rounded-lg shadow-lg p-4 border border-primary w-80"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
           >
-            {stream}
-          </motion.button>
-        ))}
-      </div>
-      {selectedStream && (
-        <motion.div variants={checklistVariants} initial="hidden" animate="visible">
-          <h2 className="text-xl font-bold mb-2 text-primary-dark">{selectedStream} Checklist</h2>
-          <ul className="space-y-2">
-            {checklists[selectedStream].map((item, index) => (
-              <li key={index} className="flex items-center">
-                <input
-                  type="checkbox"
-                  id={`item-${index}`}
-                  className="mr-2"
-                />
-                <label htmlFor={`item-${index}`} className="text-gray-700">{item}</label>
-              </li>
-            ))}
-          </ul>
-        </motion.div>
-      )}
-    </motion.div>
+            <h2 className="text-xl font-bold mb-4 text-primary text-center">Express Entry Checklist</h2>
+            <div className="flex justify-center space-x-2 mb-6">
+              {streams.map((stream) => (
+                <motion.button
+                  key={stream}
+                  className={`px-3 py-1 rounded-md font-semibold text-sm ${
+                    selectedStream === stream ? 'bg-primary text-white' : 'bg-gray-100 text-gray-800'
+                  }`}
+                  onClick={() => handleStreamClick(stream)}
+                  variants={buttonVariants}
+                  whileHover="hover"
+                  whileTap="tap"
+                >
+                  {stream}
+                </motion.button>
+              ))}
+            </div>
+            {selectedStream && (
+              <motion.div variants={checklistVariants}>
+                <h3 className="text-lg font-semibold mb-4 text-primary-dark text-center">{selectedStream} Checklist</h3>
+                <ul className="space-y-2">
+                  {checklists[selectedStream].map((item, index) => (
+                    <li key={index} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id={`item-${index}`}
+                        className="form-checkbox h-4 w-4 text-primary-dark mr-2"
+                      />
+                      <label htmlFor={`item-${index}`} className="text-gray-700 text-sm">{item}</label>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
