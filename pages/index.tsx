@@ -72,7 +72,7 @@ export default function Home() {
       setChunks(results);
 
       const prompt = endent`
-        Use the following passages to provide an answer to the query: "${searchQuery}"
+      Using the following passages, provide an enhanced answer to the question below. Integrate the information from the passages to support and enrich your response, but ensure the answer is not built around the passages. The passages should serve as supplementary material: "${searchQuery}"
 
         ${results?.map((d: any) => d.content).join("\n\n")}
       `;
