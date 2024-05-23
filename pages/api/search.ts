@@ -4,6 +4,10 @@ export const config = {
   runtime: "edge",
 };
 
+type ChunkId = {
+  id: number;
+};
+
 const handler = async (req: Request): Promise<Response> => {
   console.log('Entering pages/api/search.ts handler');
   if (req.method !== "POST") {
