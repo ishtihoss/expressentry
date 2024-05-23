@@ -3,7 +3,6 @@ import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { SearchBar } from "@/components/SearchBar";
 import { SearchResults } from "@/components/SearchResults";
-import { SettingsModal } from "@/components/SettingsModal";
 import ExpressEntryChecklist from "@/components/ExpressEntryChecklist";
 import { ExpressEntryChunk } from "@/types";
 import endent from "endent";
@@ -11,13 +10,29 @@ import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
+const LogoContainer = () => {
+  return (
+    <div className="relative inline-block">
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-green-500 rounded-lg transform rotate-3 shadow-lg"></div>
+      <div className="relative bg-white p-6 rounded-lg shadow-md">
+        <Image
+          src="/logo.png"
+          alt="Express Entry Search Engine Logo"
+          width={150}
+          height={150}
+          className="mx-auto"
+        />
+      </div>
+    </div>
+  );
+};
+
 export default function Home() {
   const [query, setQuery] = useState<string>("");
   const [chunks, setChunks] = useState<ExpressEntryChunk[]>([]);
   const [answer, setAnswer] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [showSettings, setShowSettings] = useState<boolean>(false);
   const [matchCount, setMatchCount] = useState<number>(5);
 
   const handleSearch = async (searchQuery: string) => {
@@ -101,18 +116,6 @@ export default function Home() {
     }
   };
 
-  const handleSave = () => {
-    localStorage.setItem("EE_MATCH_COUNT", matchCount.toString());
-
-    setShowSettings(false);
-  };
-
-  const handleClear = () => {
-    localStorage.removeItem("EE_MATCH_COUNT");
-
-    setMatchCount(5);
-  };
-
   useEffect(() => {
     if (matchCount > 10) {
       setMatchCount(10);
@@ -128,8 +131,10 @@ export default function Home() {
       setMatchCount(parseInt(EE_MATCH_COUNT));
     }
   }, []);
+
   console.log('Chunks data:', chunks);
   console.log('Answer data:', answer);
+
   return (
     <>
       <Head>
@@ -146,13 +151,7 @@ export default function Home() {
         <main className="flex-grow p-4">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
             <div className="text-center mb-8">
-              <Image
-                src="/logo.png"
-                alt="Express Entry Search Engine Logo"
-                width={150}
-                height={150}
-                className="mx-auto"
-              />
+              <LogoContainer />
             </div>
             <div className="mb-8">
               <SearchBar onSearch={handleSearch} />
@@ -173,21 +172,6 @@ export default function Home() {
         </main>
         <Footer />
       </div>
-
-      <SettingsModal
-        show={showSettings}
-        matchCount={matchCount}
-        onMatchCountChange={setMatchCount}
-        onSave={handleSave}
-        onClear={handleClear}
-      />
-
-      <button
-        className="fixed bottom-4 left-4 btn btn-primary"
-        onClick={() => setShowSettings(!showSettings)}
-      >
-        {showSettings ? "Hide" : "Show"} Settings
-      </button>
     </>
   );
 }
