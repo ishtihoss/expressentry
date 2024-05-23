@@ -69,7 +69,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // Fetch full chunk data for each id
-    const chunks = await Promise.all(chunkIds.map(async ({ id }) => {
+    const chunks = await Promise.all(chunkIds.map(async ({ id }: ChunkId) => {
       const { data: chunk, error } = await supabaseAdmin
         .from('chunks') // Replace with your table name
         .select('*')
@@ -97,4 +97,5 @@ const handler = async (req: Request): Promise<Response> => {
   }
 };
 
+export default handler;
 export default handler;
