@@ -1,11 +1,15 @@
 $files = @(
     ".env",
+    "pages/index.tsx",
     "pages/api/answer.ts",
     "pages/api/save-query.ts",
     "pages/api/search.ts",
     "utils/index.ts",
+    "components/SearchBar.tsx",
+    "components/SearchResults.tsx",
     "components/Answer/Answer.tsx",
-    "components/SearchResults.tsx"
+    "types/index.ts",
+    "next.config.js"
 )
 
 $outputFile = "file_contents.txt"

@@ -319,3 +319,762 @@ export const SearchResults: React.FC<SearchResultsProps> = ({ chunks, answer }) 
   return null;
 };
 
+==================================================
+File: .env
+==================================================
+OPENAI_API_KEY=sk-proj-BNpaJEOfJlwq11EMPd2OT3BlbkFJnwhLM3Gv5xAwoNaF9F4z
+NEXT_PUBLIC_SUPABASE_URL=https://cysucucevfhlzdcsasfw.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5c3VjdWNldmZobHpkY3Nhc2Z3Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxNjM4NTgyOCwiZXhwIjoyMDMxOTYxODI4fQ.zyk-gGH2dCrXBBdMW75lufw9JyevoWkFCYA_LZrMGFg
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5c3VjdWNldmZobHpkY3Nhc2Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTYzODU4MjgsImV4cCI6MjAzMTk2MTgyOH0.qb6b17BCTx5hY9Cz1HN7Aq3BfKxpFEjeAbYQpudWVy4
+
+==================================================
+File: pages/index.tsx
+==================================================
+// pages/index.tsx
+import { Footer } from "@/components/Footer";
+import { Navbar } from "@/components/Navbar";
+import { SearchBar } from "@/components/SearchBar";
+import { SearchResults } from "@/components/SearchResults";
+import { SettingsModal } from "@/components/SettingsModal";
+import { ExpressEntryChunk } from "@/types";
+import endent from "endent";
+import Head from "next/head";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+
+type Stream = 'FSWP' | 'FSTP' | 'CEC' | 'PNP';
+
+const ExpressEntryChecklist = () => {
+  const [selectedStream, setSelectedStream] = useState<Stream | ''>('');
+
+  const streams: Stream[] = ['FSWP', 'FSTP', 'CEC', 'PNP'];
+
+  const checklists: Record<Stream, string[]> = {
+    FSWP: [
+      'Passport or travel document',
+      'Language test results',
+      'Educational Credential Assessment (ECA)',
+      'Proof of Canadian education or foreign credentials',
+      'Proof of funds',
+      'Proof of work experience',
+      'Provincial nomination (if applicable)',
+      'Written job offer from a Canadian employer (if applicable)',
+      'Police certificates',
+      'Medical exams',
+      'Birth certificates (for dependent children, if applicable)',
+      'Marriage or divorce certificates (if applicable)',
+      'Adoption certificate (if applicable)',
+      'Common-law union form (if applicable)',
+    ],
+    FSTP: [
+      'Passport or travel document',
+      'Language test results',
+      'Proof of Canadian education or foreign credentials',
+      'Proof of funds',
+      'Proof of work experience',
+      'Certificate of qualification in a skilled trade issued by a Canadian province or territory',
+      'Provincial nomination (if applicable)',
+      'Written job offer from a Canadian employer (if applicable)',
+      'Police certificates',
+      'Medical exams',
+      'Birth certificates (for dependent children, if applicable)',
+      'Marriage or divorce certificates (if applicable)',
+      'Adoption certificate (if applicable)',
+      'Common-law union form (if applicable)',
+    ],
+    CEC: [
+      'Passport or travel document',
+      'Language test results',
+      'Proof of Canadian education or foreign credentials (if applicable)',
+      'Proof of Canadian work experience',
+      'Provincial nomination (if applicable)',
+      'Written job offer from a Canadian employer (if applicable)',
+      'Police certificates',
+      'Medical exams',
+      'Birth certificates (for dependent children, if applicable)',
+      'Marriage or divorce certificates (if applicable)',
+      'Adoption certificate (if applicable)',
+      'Common-law union form (if applicable)',
+    ],
+    PNP: [
+      'Passport or travel document',
+      'Language test results',
+      'Educational Credential Assessment (ECA) (if applicable)',
+      'Proof of Canadian education or foreign credentials',
+      'Proof of funds',
+      'Proof of work experience',
+      'Provincial nomination certificate',
+      'Written job offer from a Canadian employer (if applicable)',
+      'Police certificates',
+      'Medical exams',
+      'Birth certificates (for dependent children, if applicable)',
+      'Marriage or divorce certificates (if applicable)',
+      'Adoption certificate (if applicable)',
+      'Common-law union form (if applicable)',
+    ],
+  };
+
+  const handleStreamClick = (stream: Stream) => {
+    setSelectedStream(stream);
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+
+  const buttonVariants = {
+    hover: { scale: 1.05, transition: { duration: 0.2 } },
+    tap: { scale: 0.95 },
+  };
+
+  const checklistVariants = {
+    hidden: { opacity: 0, x: -50 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.5, delay: 0.2 } },
+  };
+
+  return (
+    <motion.div
+      className="container mx-auto"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <h1 className="text-2xl font-bold mb-4 text-primary">Express Entry Checklist</h1>
+      <div className="flex justify-center mb-8">
+        {streams.map((stream) => (
+          <motion.button
+            key={stream}
+            className={`px-4 py-2 rounded-md ${
+              selectedStream === stream ? 'bg-primary text-white' : 'bg-background'
+            }`}
+            onClick={() => handleStreamClick(stream)}
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
+          >
+            {stream}
+          </motion.button>
+        ))}
+      </div>
+      {selectedStream && (
+        <motion.div variants={checklistVariants} initial="hidden" animate="visible">
+          <h2 className="text-xl font-bold mb-2 text-primary-dark">{selectedStream} Checklist</h2>
+          <ul className="space-y-2">
+            {checklists[selectedStream].map((item, index) => (
+              <li key={index} className="flex items-center">
+                <input
+                  type="checkbox"
+                  id={`item-${index}`}
+                  className="mr-2"
+                />
+                <label htmlFor={`item-${index}`} className="text-gray-700">{item}</label>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+      )}
+    </motion.div>
+  );
+};
+
+export default function Home() {
+  const [query, setQuery] = useState<string>("");
+  const [chunks, setChunks] = useState<ExpressEntryChunk[]>([]);
+  const [answer, setAnswer] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [showSettings, setShowSettings] = useState<boolean>(false);
+  const [matchCount, setMatchCount] = useState<number>(5);
+
+  const handleSearch = async (searchQuery: string) => {
+    setQuery(searchQuery);
+    await handleAnswer(searchQuery);
+  };
+
+  const handleAnswer = async (searchQuery: string) => {
+    if (!searchQuery) {
+      alert("Please enter a query.");
+      return;
+    }
+
+    setAnswer("");
+    setChunks([]);
+
+    setLoading(true);
+
+    const searchResponse = await fetch("/api/search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ query: searchQuery, matches: matchCount })
+    });
+
+    if (!searchResponse.ok) {
+      setLoading(false);
+      throw new Error(searchResponse.statusText);
+    }
+
+    const results: ExpressEntryChunk[] = await searchResponse.json();
+
+    setChunks(results);
+
+    const prompt = endent`
+    Use the following passages to provide an answer to the query: "${searchQuery}"
+
+    ${results?.map((d: any) => d.content).join("\n\n")}
+    `;
+
+    const answerResponse = await fetch("/api/answer", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt })
+    });
+
+    if (!answerResponse.ok) {
+      setLoading(false);
+      throw new Error(answerResponse.statusText);
+    }
+
+    const data = answerResponse.body;
+
+    if (!data) {
+      setLoading(false);
+      return;
+    }
+
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      const chunkValue = decoder.decode(value);
+      console.log("Chunk value:", chunkValue);
+      setAnswer((prev) => {
+        const updatedAnswer = prev + chunkValue.replace("Answer:", "").trim();
+        console.log("Updated answer:", updatedAnswer);
+        return updatedAnswer;
+      });
+    }
+
+    setLoading(false);
+  };
+
+  const handleSave = () => {
+    localStorage.setItem("EE_MATCH_COUNT", matchCount.toString());
+
+    setShowSettings(false);
+  };
+
+  const handleClear = () => {
+    localStorage.removeItem("EE_MATCH_COUNT");
+
+    setMatchCount(5);
+  };
+
+  useEffect(() => {
+    if (matchCount > 10) {
+      setMatchCount(10);
+    } else if (matchCount < 1) {
+      setMatchCount(1);
+    }
+  }, [matchCount]);
+
+  useEffect(() => {
+    const EE_MATCH_COUNT = localStorage.getItem("EE_MATCH_COUNT");
+
+    if (EE_MATCH_COUNT) {
+      setMatchCount(parseInt(EE_MATCH_COUNT));
+    }
+  }, []);
+
+  return (
+    <>
+      <Head>
+        <meta
+          name="description"
+          content={`AI-powered search engine for Express Entry immigration to Canada.`}
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <div className="flex flex-col min-h-screen bg-gray-100">
+        <Navbar />
+        <main className="flex-grow p-4">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+            <div className="text-center mb-8">
+              <Image
+                src="/logo.png"
+                alt="Express Entry Search Engine Logo"
+                width={150}
+                height={150}
+                className="mx-auto"
+              />
+            </div>
+            <div className="mb-8">
+              <SearchBar onSearch={handleSearch} />
+            </div>
+
+            {loading ? (
+              <div className="animate-pulse">
+                <div className="h-4 bg-gray-300 rounded w-1/2 mb-4"></div>
+                <div className="h-4 bg-gray-300 rounded w-1/3 mb-4"></div>
+                <div className="h-4 bg-gray-300 rounded w-2/3 mb-4"></div>
+              </div>
+            ) : (
+              <SearchResults chunks={chunks} answer={answer} />
+            )}
+
+            <ExpressEntryChecklist />
+          </div>
+        </main>
+        <Footer />
+      </div>
+
+      <SettingsModal
+        show={showSettings}
+        matchCount={matchCount}
+        onMatchCountChange={setMatchCount}
+        onSave={handleSave}
+        onClear={handleClear}
+      />
+
+      <button
+        className="fixed bottom-4 left-4 btn btn-primary"
+        onClick={() => setShowSettings(!showSettings)}
+      >
+        {showSettings ? "Hide" : "Show"} Settings
+      </button>
+    </>
+  );
+}
+
+==================================================
+File: pages/api/answer.ts
+==================================================
+import { OpenAIStream } from "@/utils";
+
+export const config = {
+  runtime: "edge",
+};
+
+const handler = async (req: Request): Promise<Response> => {
+  console.log('Entering pages/api/answer.ts handler');
+  if (req.method !== "POST") {
+    return new Response("Method not allowed", { status: 405 });
+  }
+
+  try {
+    const { prompt } = (await req.json()) as {
+      prompt: string;
+    };
+
+    if (!prompt) {
+      return new Response("Bad request: missing prompt", { status: 400 });
+    }
+
+    const stream = await OpenAIStream(prompt);
+
+    if (!stream) {
+      return new Response("Failed to generate response", { status: 500 });
+    }
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
+      },
+    });
+  } catch (error: unknown) {
+    console.error("Error in /api/answer:", error);
+    if (error instanceof Error) {
+      return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
+    } else {
+      return new Response("Internal Server Error", { status: 500 });
+    }
+  }
+};
+
+export default handler;
+
+==================================================
+File: pages/api/save-query.ts
+==================================================
+// pages/api/save-query.ts
+import { NextApiRequest, NextApiResponse } from "next";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+console.log("Supabase URL:", supabaseUrl);
+console.log("Supabase Anon Key:", supabaseKey);
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error("Missing Supabase URL or anon key");
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+console.log('Entering pages/api/save-query.ts handler');
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method === "POST") {
+    const { query } = req.body;
+    console.log('Received query:', query);
+    console.log("Received query:", query);
+
+    if (!query) {
+      return res.status(400).json({ message: "Query is required" });
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("user_queries")
+        .insert({ query });
+
+      if (error) {
+        console.error("Error saving query:", error);
+        return res.status(500).json({ message: "Error saving query" });
+      }
+
+      console.log("Query saved successfully");
+      return res.status(200).json({ message: "Query saved successfully" });
+    } catch (error) {
+      console.error("Error saving query:", error);
+      return res.status(500).json({ message: "Error saving query" });
+    }
+  } else {
+    return res.status(405).json({ message: "Method not allowed" });
+  }
+}
+
+==================================================
+File: pages/api/search.ts
+==================================================
+import { supabaseAdmin } from "@/utils";
+
+export const config = {
+  runtime: "edge",
+};
+
+const handler = async (req: Request): Promise<Response> => {
+  console.log('Entering pages/api/search.ts handler');
+  if (req.method !== "POST") {
+    return new Response("Method not allowed", { status: 405 });
+  }
+
+  try {
+    const body = await req.json();
+    const { query, matches } = body;
+
+    console.log('Request body:', { query, matches });
+
+    if (!query || typeof matches !== 'number') {
+      console.log("Bad request: Missing required parameters");
+      return new Response("Bad request", { status: 400 });
+    }
+
+    const input = query.replace(/\n/g, " ");
+    console.log('Input:', input);
+
+    console.log("Fetching embeddings from OpenAI API...");
+    const openAIResponse = await fetch("https://api.openai.com/v1/embeddings", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      method: "POST",
+      body: JSON.stringify({
+        model: "text-embedding-ada-002",
+        input,
+      }),
+    });
+
+    if (!openAIResponse.ok) {
+      console.error("Error fetching embeddings:", openAIResponse.statusText);
+      return new Response("Error fetching embeddings", { status: 500 });
+    }
+
+    const json = await openAIResponse.json();
+    console.log('Full OpenAI API Response:', JSON.stringify(json, null, 2));
+
+    // Verify the structure of the response and extract the embedding
+    if (!json.data || !json.data[0] || !json.data[0].embedding) {
+      console.error("Unexpected OpenAI API response structure:", JSON.stringify(json, null, 2));
+      return new Response("Error processing embeddings", { status: 500 });
+    }
+    const embedding = json.data[0].embedding;
+    console.log('Extracted Embedding:', embedding);
+
+    console.log("Searching Express Entry chunks...");
+    const { data: chunks, error } = await supabaseAdmin.rpc("express_entry_search", {
+      query_embedding: embedding,
+      similarity_threshold: 0.015,
+      match_count: matches,
+    });
+
+    if (error) {
+      console.error("Error searching Express Entry chunks:", error);
+      return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+    }
+
+    console.log("Search results:", chunks);
+    return new Response(JSON.stringify(chunks), {
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+      },
+    });
+  } catch (error) {
+    console.error("Error in /api/search:", error);
+    return new Response("Internal Server Error", { status: 500 });
+  }
+};
+
+export default handler;
+
+==================================================
+File: utils/index.ts
+==================================================
+import { OpenAI } from 'openai';
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client
+export const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+
+// Initialize OpenAI client
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const responseCache = new Map<string, string>();
+
+export const OpenAIStream = async (prompt: string): Promise<string> => {
+  console.log('Entering OpenAIStream function');
+  // Check if the response is already cached
+  if (responseCache.has(prompt)) {
+    return responseCache.get(prompt)!; // Non-null assertion since we checked the existence
+  }
+
+  try {
+    console.log('Calling OpenAI API with prompt:', prompt);
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a helpful assistant that accurately answers queries related to Express Entry immigration to Canada. Search the web for answers, but avoid copying word-for-word. Provide high quality reference links when possible. Keep your answer concise and under 5 sentences. Be accurate, helpful, and clear.',
+        },
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      max_tokens: 150,
+      temperature: 0.2,
+    });
+
+    if (!completion || !completion.choices || completion.choices.length === 0) {
+      throw new Error('No completion choices returned from OpenAI API');
+    }
+
+    const responseText = completion.choices[0]?.message?.content?.trim() || '';
+    responseCache.set(prompt, responseText);
+
+    console.log('OpenAI API Response:', responseText); // logging the response to the console
+
+    return responseText;
+  } catch (error) {
+    console.error('Error in OpenAIStream:', error);
+    // Handling the error by returning an error message
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    return `Error: ${errorMessage}`;
+  }
+};
+
+==================================================
+File: components/SearchBar.tsx
+==================================================
+// components/SearchBar.tsx
+import { IconSearch } from "@tabler/icons-react";
+import { KeyboardEvent, useState } from "react";
+
+interface SearchBarProps {
+  onSearch: (query: string) => void;
+}
+
+export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+  const [query, setQuery] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await fetch("/api/save-query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query }),
+      });
+      onSearch(query);
+    } catch (error) {
+      console.error("Error saving query:", error);
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSubmit(e);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="relative">
+      <input
+        className="w-full pl-12 pr-20 py-3 text-lg text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        type="text"
+        placeholder="Ask a question about Express Entry..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={handleKeyDown}
+      />
+      <button
+        type="submit"
+        className="absolute right-2 top-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+      >
+        <IconSearch className="h-6 w-6" />
+      </button>
+    </form>
+  );
+};
+
+==================================================
+File: components/SearchResults.tsx
+==================================================
+// components/SearchResults.tsx
+import React from 'react';
+import { ExpressEntryChunk } from "@/types";
+import { Answer } from "@/components/Answer/Answer";
+
+interface SearchResultsProps {
+  chunks: ExpressEntryChunk[];
+  answer: string;
+}
+
+export const SearchResults: React.FC<SearchResultsProps> = ({ chunks, answer }) => {
+  // Debugging: Log the chunks to ensure they're being passed correctly
+  console.log('Chunks:', chunks);
+
+  return (
+    <div className="mb-8">
+      {answer && (
+        <>
+          <h2 className="text-2xl font-bold mb-4">Answer</h2>
+          <Answer text={answer} />
+        </>
+      )}
+
+      {chunks.length > 0 && (
+        <>
+          <h2 className="text-2xl font-bold mt-8 mb-4">Relevant Passages</h2>
+          {chunks.map((chunk) => (
+            <div key={chunk.id} className="mb-4 p-4 bg-white rounded-md shadow"> {/* Use chunk.id for a unique key */}
+              <div className="mb-2">
+                <a href={chunk.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                  {chunk.title}
+                </a>
+              </div>
+              <p>{chunk.content}</p>
+            </div>
+          ))}
+        </>
+      )}
+
+      {/* Optionally, render a message or component if there are no chunks */}
+      {!answer && chunks.length === 0 && (
+        <p>No relevant passages found.</p>
+      )}
+    </div>
+  );
+};
+
+==================================================
+File: components/Answer/Answer.tsx
+==================================================
+import React, { useEffect, useState } from 'react';
+import styles from './answer.module.css';
+
+interface AnswerProps {
+  text: string;
+}
+
+export const Answer: React.FC<AnswerProps> = ({ text }) => {
+  const [answer, setAnswer] = useState<string>('');
+
+  useEffect(() => {
+    setAnswer(text);
+  }, [text]);
+
+  return (
+    <div className={styles['answer-container']}>
+      <p className={styles['answer-text']}>{answer}</p>
+    </div>
+  );
+};
+
+==================================================
+File: types/index.ts
+==================================================
+export enum OpenAIModel {
+    DAVINCI_TURBO = "gpt-3.5-turbo"
+  }
+  
+  export type ExpressEntryArticle = {
+    title: string;
+    url: string;
+    date: string;
+    content: string;
+    length: number;
+    tokens: number;
+    chunks: ExpressEntryChunk[];
+  };
+  
+  export type ExpressEntryChunk = {
+    title: string;
+    url: string;
+    article_date: string;
+    content: string;
+    content_length: number;
+    content_tokens: number;
+    embedding: number[];
+  };
+  
+  export type ExpressEntryJSON = {
+    current_date: string;
+    source: string;
+    url: string;
+    length: number;
+    tokens: number;
+    articles: ExpressEntryArticle[];
+  };
+
+==================================================
+File: next.config.js
+==================================================
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  images: {
+    unoptimized: true,
+  },
+}
+
+module.exports = nextConfig
+

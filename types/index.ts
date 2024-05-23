@@ -13,12 +13,13 @@ export enum OpenAIModel {
   };
   
   export type ExpressEntryChunk = {
+    id: number; // Assuming the ID is a number. Adjust the type as necessary.
     title: string;
     url: string;
     article_date: string;
     content: string;
-    content_length: number;
-    content_tokens: number;
+    length: number;
+    tokens: number;
     embedding: number[];
   };
   

@@ -51,10 +51,9 @@ const handler = async (req: Request): Promise<Response> => {
       return new Response("Error processing embeddings", { status: 500 });
     }
     const embedding = json.data[0].embedding;
-    console.log('Extracted Embedding:', embedding);
-
+   
     console.log("Searching Express Entry chunks...");
-    const { data: chunks, error } = await supabaseAdmin.rpc("express_entry_search", {
+    const { data: chunkIds, error } = await supabaseAdmin.rpc("express_entry_search", {
       query_embedding: embedding,
       similarity_threshold: 0.015,
       match_count: matches,
@@ -64,6 +63,22 @@ const handler = async (req: Request): Promise<Response> => {
       console.error("Error searching Express Entry chunks:", error);
       return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { "Content-Type": "application/json" } });
     }
+
+    // Fetch full chunk data for each id
+    const chunks = await Promise.all(chunkIds.map(async ({ id }) => {
+      const { data: chunk, error } = await supabaseAdmin
+        .from('chunks') // Replace with your table name
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        console.error(`Error fetching chunk with id ${id}:`, error);
+        // Handle error appropriately
+      }
+
+      return chunk;
+    }));
 
     console.log("Search results:", chunks);
     return new Response(JSON.stringify(chunks), {

@@ -172,66 +172,69 @@ export default function Home() {
 
     setLoading(true);
 
-    const searchResponse = await fetch("/api/search", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ query: searchQuery, matches: matchCount })
-    });
-
-    if (!searchResponse.ok) {
-      setLoading(false);
-      throw new Error(searchResponse.statusText);
-    }
-
-    const results: ExpressEntryChunk[] = await searchResponse.json();
-
-    setChunks(results);
-
-    const prompt = endent`
-    Use the following passages to provide an answer to the query: "${searchQuery}"
-
-    ${results?.map((d: any) => d.content).join("\n\n")}
-    `;
-
-    const answerResponse = await fetch("/api/answer", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ prompt })
-    });
-
-    if (!answerResponse.ok) {
-      setLoading(false);
-      throw new Error(answerResponse.statusText);
-    }
-
-    const data = answerResponse.body;
-
-    if (!data) {
-      setLoading(false);
-      return;
-    }
-
-    const reader = data.getReader();
-    const decoder = new TextDecoder();
-    let done = false;
-
-    while (!done) {
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      const chunkValue = decoder.decode(value);
-      console.log("Chunk value:", chunkValue);
-      setAnswer((prev) => {
-        const updatedAnswer = prev + chunkValue.replace("Answer:", "").trim();
-        console.log("Updated answer:", updatedAnswer);
-        return updatedAnswer;
+    try {
+      const searchResponse = await fetch("/api/search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ query: searchQuery, matches: matchCount })
       });
-    }
 
-    setLoading(false);
+      if (!searchResponse.ok) {
+        throw new Error(searchResponse.statusText);
+      }
+
+      const results: ExpressEntryChunk[] = await searchResponse.json();
+      console.log("Search API Response:", results);
+
+      setChunks(results);
+
+      const prompt = endent`
+        Use the following passages to provide an answer to the query: "${searchQuery}"
+
+        ${results?.map((d: any) => d.content).join("\n\n")}
+      `;
+
+      const answerResponse = await fetch("/api/answer", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ prompt })
+      });
+
+      if (!answerResponse.ok) {
+        throw new Error(answerResponse.statusText);
+      }
+
+      const data = answerResponse.body;
+
+      if (!data) {
+        return;
+      }
+
+      const reader = data.getReader();
+      const decoder = new TextDecoder();
+      let done = false;
+
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        const chunkValue = decoder.decode(value);
+        console.log("Chunk value:", chunkValue);
+        setAnswer((prev) => {
+          const updatedAnswer = prev + chunkValue.replace("Answer:", "").trim();
+          console.log("Updated answer:", updatedAnswer);
+          return updatedAnswer;
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      alert("An error occurred while fetching data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSave = () => {
@@ -261,7 +264,8 @@ export default function Home() {
       setMatchCount(parseInt(EE_MATCH_COUNT));
     }
   }, []);
-
+  console.log('Chunks data:', chunks);
+  console.log('Answer data:', answer);
   return (
     <>
       <Head>
