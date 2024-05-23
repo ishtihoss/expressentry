@@ -25,13 +25,13 @@ export const SearchResults: React.FC<SearchResultsProps> = ({ chunks, answer }) 
       )}
 
       {/* Check and display chunks if available */}
-      {chunks && chunks.length > 0 ? (
+      {chunks && chunks.length > 0 && (
         <>
           <h2 className="text-2xl font-bold mt-8 mb-4">Relevant Passages</h2>
           {chunks.map((chunk) => (
-            <div key={chunk.id} className="mb-4 p-4 bg-white rounded-md shadow">
+            <div key={chunk.id} className="mb-4 p-6 bg-gradient-to-br from-blue-400 to-purple-500 rounded-md shadow-md text-white">
               <h3 className="mb-2">
-                <a href={chunk.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                <a href={chunk.url} target="_blank" rel="noopener noreferrer" className="text-white hover:text-yellow-200 transition duration-300">
                   {chunk.title}
                 </a>
               </h3>
@@ -39,9 +39,6 @@ export const SearchResults: React.FC<SearchResultsProps> = ({ chunks, answer }) 
             </div>
           ))}
         </>
-      ) : (
-        // Display a message if no chunks are available
-        <p className="text-gray-600">No relevant passages found.</p>
       )}
     </div>
   );
