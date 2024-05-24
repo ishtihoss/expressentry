@@ -3,21 +3,26 @@
  |.eslintrc.json
  |.git
  |.gitignore
- |.next
- |.vercel
- | |project.json
- | |README.txt
+ |.vscode
+ | |extensions.json
+ | |settings.json
  |components
  | |Answer
  | | |answer.module.css
  | | |Answer.tsx
+ | |ExpressEntryChecklist.tsx
  | |Footer.tsx
  | |Navbar.tsx
+ | |searchbar.module.css
  | |SearchBar.tsx
+ | |SearchContainer.tsx
  | |SearchResults.tsx
  | |SettingsModal.tsx
  |express_entry_data.json
+ |file_contents.txt
+ |fix.ps1
  |generate_tree.sh
+ |gentree.sh
  |license
  |next-env.d.ts
  |next.config.js
@@ -44,10 +49,15 @@
  |scripts
  | |embed.ts
  | |scraper.py
+ |spiderweb.ps1
  |stream-test2.js
  |streaming-test.js
  |styles
  | |globals.css
+ |supabase
+ | |.gitignore
+ | |config.toml
+ | |seed.sql
  |tailwind.config.js
  |tree.txt
  |tsconfig.json
