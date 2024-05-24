@@ -59,7 +59,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Searching Express Entry chunks...");
     const { data: chunkIds, error } = await supabaseAdmin.rpc("express_entry_search", {
       query_embedding: embedding,
-      similarity_threshold: 0.05,
+      similarity_threshold: 0.03,
       match_count: matches,
     });
 

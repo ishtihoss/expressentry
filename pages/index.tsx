@@ -1,10 +1,9 @@
 // pages/index.tsx
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
-import { SearchBar } from "@/components/SearchBar";
-import { SearchResults } from "@/components/SearchResults";
 import { SettingsModal } from "@/components/SettingsModal";
 import ExpressEntryChecklist from "@/components/ExpressEntryChecklist";
+import { SearchContainer } from "@/components/SearchContainer";
 import { ExpressEntryChunk } from "@/types";
 import endent from "endent";
 import Head from "next/head";
@@ -165,20 +164,12 @@ export default function Home() {
             <div className="text-center mb-8">
               <LogoContainer />
             </div>
-            <div className="mb-8">
-              <SearchBar onSearch={handleSearch} />
-            </div>
-
-            {loading ? (
-              <div className="animate-pulse">
-                <div className="h-4 bg-gray-300 rounded w-1/2 mb-4"></div>
-                <div className="h-4 bg-gray-300 rounded w-1/3 mb-4"></div>
-                <div className="h-4 bg-gray-300 rounded w-2/3 mb-4"></div>
-              </div>
-            ) : (
-              <SearchResults chunks={chunks} answer={answer} />
-            )}
-
+            <SearchContainer
+              onSearch={handleSearch}
+              chunks={chunks}
+              answer={answer}
+              loading={loading}
+            />
             <ExpressEntryChecklist />
           </div>
         </main>
