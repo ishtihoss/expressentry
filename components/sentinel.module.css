@@ -46,7 +46,7 @@
     padding: 8px;
     display: none;
     white-space: nowrap;
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Press Start 2P', 'Courier New', Courier, monospace;
   }
   
   .container:hover .speechBubble {
