@@ -1,14 +1,13 @@
-// pages/index.tsx
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { SettingsModal } from "@/components/SettingsModal";
 import ExpressEntryChecklist from "@/components/ExpressEntryChecklist";
 import { SearchContainer } from "@/components/SearchContainer";
-import { ExpressEntryChunk } from "@/types";
-import Head from "next/head";
 import { LogoContainer } from "@/components/LogoContainer";
+import Sentinel from "@/components/Sentinel";
 import { useSearch } from "@/hooks/useSearch";
 import { useSettings } from "@/hooks/useSettings";
+import Head from "next/head";
 
 export default function Home() {
   const { query, chunks, answer, loading, handleSearch } = useSearch();
@@ -41,6 +40,7 @@ export default function Home() {
             <ExpressEntryChecklist />
           </div>
         </main>
+        <Sentinel />
         <Footer />
       </div>
 
