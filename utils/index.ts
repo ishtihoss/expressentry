@@ -23,7 +23,7 @@ export const OpenAIStream = async (prompt: string): Promise<string> => {
       messages: [
         {
           role: 'system',
-          content: 'You are a helpful assistant that accurately answers queries related to Express Entry immigration to Canada. Search the web for answers, but avoid copying word-for-word. Provide high quality reference links when possible. Keep your answer concise and under 5 sentences. Be accurate, helpful, and clear.',
+          content: "Could you assist me with the Express Entry immigration process to Canada? Please provide a concise, clear, and accurate response, and refer to high-quality sources where possible. Remember to paraphrase the information instead of copying it directly.",
         },
         {
           role: 'user',
