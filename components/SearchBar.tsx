@@ -2,6 +2,12 @@ import { IconSearch } from "@tabler/icons-react";
 import { KeyboardEvent, useState } from "react";
 import styles from "./searchbar.module.css";
 
+
+declare global {
+  function gtag_report_conversion(url?: string): void;
+}
+
+
 interface SearchBarProps {
   onSearch: (query: string) => void;
 }
