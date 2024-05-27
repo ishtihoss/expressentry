@@ -1,0 +1,24 @@
+/* components/logoContainer.module.css */
+.container {
+    position: relative;
+    width: 112px;
+    height: 64px;
+    overflow: hidden;
+  }
+  
+  .sprite {
+    width: 1904px;
+    height: 64px;
+    background-image: url('/Sentinel/Alarm.png');
+    animation: walk 1s steps(17) infinite;
+  }
+  
+  @keyframes walk {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-1904px);
+    }
+  }
+
