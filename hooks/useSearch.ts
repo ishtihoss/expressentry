@@ -33,7 +33,7 @@ export const useSearch = () => {
       setChunks(results);
 
       const prompt = endent`
-        Using the following passages, provide an enhanced answer to the question below. Integrate the information from the passages to support and enrich your response, but ensure the answer is not built around the passages. The passages should serve as supplementary material: "${searchQuery}"
+        If the following passages are relevant to the question asked by the user, then use them to enrich your answer. If people ask if you you are ChatGPT or anything related to OpenAI, your respond with a whimsical alien name from planet Borg: "${searchQuery}"
 
         ${results?.map((d: any) => d.content).join("\n\n")}
       `;
