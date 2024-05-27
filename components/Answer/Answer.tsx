@@ -9,7 +9,13 @@ export const Answer: React.FC<AnswerProps> = ({ text }) => {
   const [answer, setAnswer] = useState<string>('');
 
   useEffect(() => {
-    setAnswer(text);
+    const sentences = text.match(/[^.!?]+[.!?]/g);
+    if (sentences) {
+      const completeAnswer = sentences.join(' ');
+      setAnswer(completeAnswer);
+    } else {
+      setAnswer(text);
+    }
   }, [text]);
 
   return (

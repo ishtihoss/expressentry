@@ -19,17 +19,15 @@ const handler = async (req: Request): Promise<Response> => {
       return new Response("Bad request: missing prompt", { status: 400 });
     }
 
-    const stream = await OpenAIStream(prompt);
+    const answer = await OpenAIStream(prompt);
 
-    if (!stream) {
-      return new Response("Failed to generate response", { status: 500 });
-    }
+    const sentences = answer.match(/[^.!?]+[.!?]/g);
+    const completeAnswer = sentences ? sentences.join(' ') : answer;
 
-    return new Response(stream, {
+    return new Response(completeAnswer, {
       headers: {
-        "Content-Type": "text/event-stream",
+        "Content-Type": "text/plain",
         "Cache-Control": "no-cache, no-transform",
-        Connection: "keep-alive",
       },
     });
   } catch (error: unknown) {
