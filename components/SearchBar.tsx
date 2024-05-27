@@ -1,4 +1,3 @@
-// components/SearchBar.tsx
 import { IconSearch } from "@tabler/icons-react";
 import { KeyboardEvent, useState } from "react";
 import styles from "./searchbar.module.css";
@@ -23,6 +22,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         body: JSON.stringify({ query }),
       });
       onSearch(query);
+      // Call the gtag_report_conversion function when the search button is clicked
+      gtag_report_conversion();
     } catch (error) {
       console.error("Error saving query:", error);
     } finally {

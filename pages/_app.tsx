@@ -3,7 +3,8 @@ import { Inter } from "@next/font/google";
 import type { AppProps } from "next/app";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import Head from 'next/head'; // Import Head
+import Head from 'next/head';
+import Script from 'next/script';
 import 'tailwindcss/tailwind.css';
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
@@ -27,8 +28,37 @@ export default function App({ Component, pageProps }: AppProps<{}>) {
   return (
     <>
       <Head>
-        <title>Express Entry Search Engine</title> {/* Set the default site-wide title */}
+        <title>Express Entry Search Engine</title>
       </Head>
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=AW-11387636261"
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){window.dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'AW-11387636261');
+        `}
+      </Script>
+      <Script id="gtag-event" strategy="afterInteractive">
+        {`
+          function gtag_report_conversion(url) {
+            var callback = function () {
+              if (typeof(url) != 'undefined') {
+                window.location = url;
+              }
+            };
+            gtag('event', 'conversion', {
+              'send_to': 'AW-11387636261/01ZGCLj4-7MZEKWUhrYq',
+              'event_callback': callback
+            });
+            return false;
+          }
+        `}
+      </Script>
       <style jsx global>{`
         html {
           font-family: ${inter.style.fontFamily};
