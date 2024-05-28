@@ -1,7 +1,7 @@
 /* components/logoContainer.module.css */
 .container {
     position: relative;
-    width: 112px;
+    width: 80px;
     height: 64px;
     overflow: hidden;
   }
@@ -9,8 +9,8 @@
   .sprite {
     width: 560px;
     height: 64px;
-    background-image: url('/Sentinel/Walk.png');
-    animation: walk 0.9s steps(5) infinite;
+    background-image: url('/mechmike/idle.png');
+    animation: walk 0.9s steps(7) infinite;
   }
   
   @keyframes walk {
