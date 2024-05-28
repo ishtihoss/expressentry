@@ -23,7 +23,7 @@ const Sentinel = () => {
           isHovered ? styles.attackAnimation : styles.idleAnimation
         }`}
       />
-      <div className={styles.speechBubble}>Leave me alone!</div>
+      <div className={styles.speechBubble}>New features coming soon.</div>
     </div>
   );
 };
