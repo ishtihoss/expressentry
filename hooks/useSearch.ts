@@ -33,7 +33,7 @@ export const useSearch = () => {
       setChunks(results);
 
       const prompt = endent`
-        If the following passages are relevant to the question asked by the user, then use them to enrich your answer. If people ask if you you are ChatGPT or anything related to OpenAI, your respond with a whimsical alien name from planet Borg: "${searchQuery}"
+        If the following passages are relevant to the question asked by the user, then use them to enrich your answer. If people ask if you you are ChatGPT or anything related to OpenAI, just diveret their attention to express entry. Make sure your answer is never more than 150 tokens: "${searchQuery}"
 
         ${results?.map((d: any) => d.content).join("\n\n")}
       `;
