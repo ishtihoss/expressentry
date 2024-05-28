@@ -7,10 +7,10 @@
   }
   
   .sprite {
-    width: 1904px;
+    width: 560px;
     height: 64px;
-    background-image: url('/Sentinel/Alarm.png');
-    animation: walk 1s steps(17) infinite;
+    background-image: url('/Sentinel/Walk.png');
+    animation: walk 0.9s steps(5) infinite;
   }
   
   @keyframes walk {
@@ -18,7 +18,9 @@
       transform: translateX(0);
     }
     to {
-      transform: translateX(-1904px);
+      transform: translateX(-560px);
     }
   }
+
+
 
