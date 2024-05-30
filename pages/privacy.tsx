@@ -9,7 +9,7 @@ const PrivacyPolicy = () => {
       </Head>
       <h1 className="text-4xl font-bold mb-8">Privacy Policy</h1>
       <p className="text-lg mb-8">
-        At Your ExpressEntry.ca, we are committed to protecting your privacy. This Privacy Policy outlines how we collect, use, and safeguard your personal information when you interact with our website and services.
+        At expressentry.ca, we are committed to protecting your privacy. This Privacy Policy outlines how we collect, use, and safeguard your personal information when you interact with our website and services.
       </p>
       <h2 className="text-2xl font-bold mb-4">Information Collection</h2>
       <p className="text-lg mb-8">
