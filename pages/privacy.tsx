@@ -13,15 +13,19 @@ const PrivacyPolicy = () => {
       </p>
       <h2 className="text-2xl font-bold mb-4">Information Collection</h2>
       <p className="text-lg mb-8">
-        When you utilize our AI chatbot, we collect and store your search queries to enhance our services and provide a personalized user experience. We do not collect any personally identifiable information unless you voluntarily provide it to us.
+        When you sign in to our AI chatbot using your Google account, we collect your email address solely for authentication purposes and to send you opt-in newsletters if you choose to subscribe. We do not collect any other personal information from your Google account.
       </p>
       <h2 className="text-2xl font-bold mb-4">Information Usage</h2>
       <p className="text-lg mb-8">
-        The collected search queries are used to analyze trends, improve our AI chatbot&apos;s performance, and optimize the user experience. Your search queries may be utilized to train our AI models and algorithms.
+        Your email address is used only for authentication and to send you newsletters if you have opted in. We do not use your email address for any other purpose or share it with third parties.
       </p>
       <h2 className="text-2xl font-bold mb-4">Data Security</h2>
       <p className="text-lg mb-8">
-        We implement industry-standard measures to protect your information from unauthorized access, alteration, or destruction. However, please be aware that no method of transmission over the internet or electronic storage is 100% secure, and we cannot guarantee absolute security.
+        We implement industry-standard measures to protect your information from unauthorized access, alteration, or destruction. Your email address is securely stored and encrypted. However, please be aware that no method of transmission over the internet or electronic storage is 100% secure, and we cannot guarantee absolute security.
+      </p>
+      <h2 className="text-2xl font-bold mb-4">Third-Party Services</h2>
+      <p className="text-lg mb-8">
+        We use Google Sign-In to authenticate users and provide a seamless login experience. By signing in with your Google account, you are subject to Google&apos;s privacy policy and terms of service. We do not have access to or control over the information collected by Google during the sign-in process.
       </p>
       <h2 className="text-2xl font-bold mb-4">Privacy Policy Updates</h2>
       <p className="text-lg">
