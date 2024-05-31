@@ -8,7 +8,7 @@ export const Footer: FC = () => {
         This is an advisory tool and not a substitute for professional legal advice. We are not affiliated with or endorsed by the Canadian government.
       </p>
       <p className="text-center text-xs">
-        &copy; {new Date().getFullYear()} All rights reserved.{' '}
+        &copy; {new Date().getFullYear()} All rights reserved. |{' '}
         <Link href="/privacy" className="text-gray-600 hover:text-gray-700">
           Privacy Policy
         </Link>{' '}
