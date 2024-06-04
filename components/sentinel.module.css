@@ -53,3 +53,17 @@
 .container:hover .speechBubble {
   display: block;
 }
+
+.latest-headline {
+  margin-top: 20px;
+}
+
+.latest-headline h3 {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.latest-headline a {
+  color: blue;
+  text-decoration: underline;
+}

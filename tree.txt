@@ -4,6 +4,9 @@
  |.git
  |.gitignore
  |.next
+ |.vercel
+ | |project.json
+ | |README.txt
  |.vscode
  | |extensions.json
  | |settings.json
@@ -13,6 +16,8 @@
  | | |Answer.tsx
  | |ExpressEntryChecklist.tsx
  | |Footer.tsx
+ | |GoogleAuth.tsx
+ | |logoContainer.module.css
  | |LogoContainer.tsx
  | |Navbar.tsx
  | |searchbar.module.css
@@ -29,8 +34,11 @@
  |hooks
  | |useSearch.ts
  | |useSettings.ts
+ |lib
+ | |supabaseClient.ts
  |license
  |next-env.d.ts
+ |next-sitemap.config.js
  |next.config.js
  |node_modules
  |openai-test.js
@@ -42,13 +50,32 @@
  | | |save-query.ts
  | | |search.ts
  | |index.tsx
+ | |privacy.tsx
+ | |terms.tsx
  | |_app.tsx
  | |_document.tsx
  |populate_chunks.js
  |postcss.config.js
  |public
+ | |EN_ODP-EE_Admissions-CITZ.xlsx
  | |favicon.ico
  | |logo.png
+ | |mechmike
+ | | |all.png
+ | | |attack1.png
+ | | |attack2.png
+ | | |bullet.png
+ | | |bullet_impact.png
+ | | |combo.png
+ | | |death.png
+ | | |hand_cannon.png
+ | | |hit.png
+ | | |idle.png
+ | | |jump.png
+ | | |Mechanic Mike.ase
+ | | |run.png
+ | |PORKOsmall.png
+ | |robots.txt
  | |Sentinel
  | | |Alarm.png
  | | |All.png
@@ -58,6 +85,8 @@
  | | |Idle.png
  | | |Sentinel.ase
  | | |Walk.png
+ | |sitemap-0.xml
+ | |sitemap.xml
  |README.md
  |requirements.txt
  |schema.sql
