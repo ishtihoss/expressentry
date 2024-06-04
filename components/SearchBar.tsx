@@ -2,11 +2,9 @@ import { IconSearch } from "@tabler/icons-react";
 import { KeyboardEvent, useState } from "react";
 import styles from "./searchbar.module.css";
 
-
 declare global {
   function gtag_report_conversion(url?: string): void;
 }
-
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -46,6 +44,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   return (
     <form onSubmit={handleSubmit} className={styles.searchForm}>
       <input
+        id="search-input"
         className={styles.searchInput}
         type="text"
         placeholder="Ask a question about Express Entry..."
