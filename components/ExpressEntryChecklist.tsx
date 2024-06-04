@@ -76,6 +76,7 @@ const ExpressEntryChecklist = () => {
     ],
   };
 
+
   const handleStreamClick = (stream: Stream) => {
     setSelectedStream(stream);
   };
@@ -114,13 +115,13 @@ const ExpressEntryChecklist = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed bottom-20 right-8 bg-white rounded-lg shadow-lg p-4 border border-primary w-80"
+            className="fixed bottom-20 right-8 bg-white rounded-lg shadow-lg p-4 border border-primary w-80 max-h-[80vh] overflow-y-auto safe-top"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
           >
-            <h2 className="text-xl font-bold mb-4 text-primary text-center">Express Entry Checklist</h2>
+            <h2 className="text-xl font-bold mb-4 text-primary text-center sticky top-0 bg-white pt-4">Express Entry Checklist</h2>
             <div className="flex justify-center space-x-2 mb-6">
               {streams.map((stream) => (
                 <motion.button
