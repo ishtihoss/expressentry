@@ -29,8 +29,8 @@ const Sentinel = () => {
           console.log('Latest item:', latestItem);
 
           setLatestHeadline({
-            title: latestItem.title,
-            link: latestItem.link,
+            title: latestItem.title || '',
+            link: latestItem.link || '',
           });
         } else {
           console.log('No items found in the feed');
