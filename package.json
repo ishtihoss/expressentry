@@ -11,7 +11,6 @@
     "embed": "tsx scripts/embed.ts"
   },
   "dependencies": {
-    "@next/font": "^14.2.3",
     "@supabase/auth-helpers-react": "^0.5.0",
     "@tabler/icons-react": "^2.4.0",
     "@types/node": "18.14.0",
