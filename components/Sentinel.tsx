@@ -39,12 +39,12 @@ const Sentinel = () => {
         } catch (error) {
           console.error('Error fetching latest headline:', error);
         }
-      } else {
-        console.log('User not authenticated');
       }
     };
 
-    fetchLatestHeadline();
+    if (user) {
+      fetchLatestHeadline();
+    }
   }, [user]);
 
   const handleMouseEnter = () => {
@@ -66,7 +66,7 @@ const Sentinel = () => {
           isHovered ? styles.attackAnimation : styles.idleAnimation
         }`}
       />
-      {user && latestHeadline ? (
+      {latestHeadline ? (
         <div className={styles.speechBubble}>
           <h3>{latestHeadline.title}</h3>
           <a href={latestHeadline.link} target="_blank" rel="noopener noreferrer">
