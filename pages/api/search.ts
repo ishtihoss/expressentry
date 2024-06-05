@@ -36,7 +36,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
       method: "POST",
       body: JSON.stringify({
-        model: "text-embedding-3-small",
+        model: "text-embedding-3-small", //this was a game changer
         input,
       }),
     });
