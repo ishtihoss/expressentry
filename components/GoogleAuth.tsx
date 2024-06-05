@@ -11,7 +11,7 @@ const GoogleAuth = () => {
         if (event === 'SIGNED_IN') {
           // User successfully signed in
           // You can access the user's session and perform further actions
-          console.log('User signed in:', session);
+          
           setIsSignedIn(true);
         } else if (event === 'SIGNED_OUT') {
           // User signed out
