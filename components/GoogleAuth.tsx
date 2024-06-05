@@ -1,4 +1,3 @@
-// components/GoogleAuth.tsx
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 
@@ -7,14 +6,12 @@ const GoogleAuth = () => {
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         if (event === 'SIGNED_IN') {
-          // User successfully signed in
-          // You can access the user's session and perform further actions
-          
           setIsSignedIn(true);
+          // Emit an event that the user has signed in
+          window.dispatchEvent(new CustomEvent('USER_SIGNED_IN', { detail: session.user }));
         } else if (event === 'SIGNED_OUT') {
-          // User signed out
           setIsSignedIn(false);
         }
       }
@@ -36,7 +33,7 @@ const GoogleAuth = () => {
   };
 
   if (isSignedIn) {
-    return null; // Hide the button when the user is signed in
+    return null;
   }
 
   return (
