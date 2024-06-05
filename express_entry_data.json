@@ -1,8 +1,8 @@
 {
-  "current_date": "2024-05-09",
+  "current_date": "2024-06-05",
   "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry.html",
-  "length": 49184,
-  "tokens": 10604,
+  "length": 51615,
+  "tokens": 11198,
   "chunks": [
     {
       "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/eligibility/find-national-occupation-code.html",
@@ -49,9 +49,9 @@
     {
       "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/works.html",
       "title": "How Express Entry works",
-      "content": "How Express Entry works Express Entry is an online system that we use to manage immigration applications from skilled workers. There are 3 immigration programs managed through Express Entry: Canadian Experience Class for skilled workers who have Canadian work experience work experience must have been gained in the 3 years before you apply Learn more Federal Skilled Worker Program for skilled workers with foreign work experience must meet criteria for education and other factors Learn more Federal Skilled Trades Program for skilled workers who are qualified in a skilled trade must have a valid job offer or a certificate of qualification Learn more If you’re eligible for one of the above programs, you can also apply through Express Entry for the Provincial Nominee Program. If you’re nominated, you’ll get extra points so you can be invited to apply quickly.",
-      "length": 866,
-      "tokens": 153
+      "content": "How Express Entry works Express Entry is an online system that we use to manage immigration applications from skilled workers. There are 3 immigration programs managed through Express Entry: Canadian Experience Class for skilled workers with eligible Canadian work experience work experience must have been gained in the 3 years before you apply Learn more Federal Skilled Worker Program for skilled workers with foreign or Canadian work experience must meet criteria for education and other factors Learn more Federal Skilled Trades Program for skilled workers who are qualified in a skilled trade must have a valid job offer or a certificate of qualification Learn more If you’re eligible for one of the above programs, you can also apply through Express Entry for the Provincial Nominee Program. If you’re nominated, you’ll get extra points so you can be invited to apply quickly.",
+      "length": 883,
+      "tokens": 155
     },
     {
       "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/works.html",
@@ -63,7 +63,7 @@
     {
       "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/works.html",
       "title": "How Express Entry works",
-      "content": "Some documents take a long time to get, so you should get them ready early. Get the documents you need Step 4: Fill out your profile Your Express Entry profile is where you give us information about yourself. If you’re eligible, we’ll accept you into our pool of candidates and give you a CRS score. Submit your profile Step 5: Get an invitation and apply We send invitations to apply to the candidates with the highest scores in the pool. If we invite you to apply, you’ll have 60 days to submit your application. We’ll process most complete applications that have all supporting documents in 6 months or less. Apply through Express Entry Page details Date modified: 2024-01-04.",
+      "content": "Some documents take a long time to get, so you should get them ready early. Get the documents you need Step 4: Fill out your profile Your Express Entry profile is where you give us information about yourself. If you’re eligible, we’ll accept you into our pool of candidates and give you a CRS score. Submit your profile Step 5: Get an invitation and apply We send invitations to apply to the candidates with the highest scores in the pool. If we invite you to apply, you’ll have 60 days to submit your application. We’ll process most complete applications that have all supporting documents in 6 months or less. Apply through Express Entry Page details Date modified: 2024-05-30.",
       "length": 679,
       "tokens": 145
     },
@@ -168,21 +168,49 @@
     {
       "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/apply-permanent-residence.html",
       "title": "Apply for permanent residence: Express Entry",
-      "content": "Apply for permanent residence: Express Entry 1. Fill out the online form 2. Scan and upload the documents 3. Pay your fees 4. Submit your complete application 5. After you apply Check your application status Before you apply for permanent residence You can only apply for permanent residence through Express Entry if you’ve received an invitation to apply. Once you have your invitation to apply Your Express Entry invitation to apply is valid for 60 days only. You should start filling out the online form right away so that you can get all the information and documents you need before your invitation expires. Follow these steps to fill out the online form: Sign in to your account. Click the link to apply for permanent residence under Express Entry. When filling out the form: Make sure you submit all of the required documents. All of your answers must be complete and true. Make sure all the mandatory fields are completed, or you won’t be able to submit your application.",
-      "length": 979,
-      "tokens": 193
+      "content": "Apply for permanent residence: Express Entry 1. Fill out the online form 2. Scan and upload the documents 3. Pay your fees 4. Submit your complete application 5. After you apply Check your application status Before you apply for permanent residence You can only apply for permanent residence through Express Entry if you’ve received an invitation to apply. Once you have your invitation to apply Your Express Entry invitation to apply is valid for 60 days only. You should start filling out the online form right away so that you can get all the information and documents you need before your invitation expires. If you took a French test from TEF Canada: Test d’évaluation de français between December 11, 2023 and May 6, 2024 If you took a French language test between December 11, 2023 and May 6, 2024 from TEF Canada: Test d’évaluation de français you may need to take action in your Express Entry profile.",
+      "length": 910,
+      "tokens": 198
     },
     {
       "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/apply-permanent-residence.html",
       "title": "Apply for permanent residence: Express Entry",
-      "content": "You can save your information on the form and go back as often as you need to. Fees For your application: $1,525 Include your spouse: $1,525 Include a dependent child: $260 Processing time ? Varies by program You may need to give biometrics with your application. This processing time includes the time you need to give your biometrics. Processing times Processing times will vary based on: the type of application submitted if the application is complete how quickly we expect to process applications we’ve already received how easily we can verify your information how long you take to respond to any requests or concerns other factors More people want to immigrate to Canada than we can bring in each year. Applications received after we meet our yearly limit may have to wait longer to be processed. Learn how processing times are calculated. CloseClose overlay (escape key) Top questions about Express Entry I was found not eligible for Express Entry and I can’t change my profile.",
-      "length": 986,
-      "tokens": 192
+      "content": "CCI Paris Ile-de-France administers the TEF Canada language test for immigration to Canada. As part of ongoing improvements to the way French language is evaluated, CCI temporarily modified the Niveaux de compétence linguistique canadien (NCLC) to reflect raw scores. This change has been reverted back to the Express Entry scoring grid we currently use.",
+      "length": 354,
+      "tokens": 75
     },
     {
       "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/apply-permanent-residence.html",
       "title": "Apply for permanent residence: Express Entry",
-      "content": "What do I do? Why didn’t I get points for my job offer in Express Entry? I am working in Canada on a valid work permit. Does this count as a job offer? See all questions about this topic Page details Date modified: 2024-04-30.",
+      "content": "Test results for each ability NCLC Level Speaking (expression orale) Listening (compréhension de l’oral) Reading (compréhension de l’écrit) Writing (expression écrite) 10 393-450 316-360 263-300 393-450 9 371-392 298-315 248-262 371-392 8 349-370 280-297 233-247 349-370 7 310-348 249-279 207-232 310-348 6 271-309 217-248 181-206 271-309 5 226-270 181-216 151-180 226-270 4 181-225 145-180 121-150 181-225 If you were impacted by this scoring change, you’ll have received an email message from the CCI, notifying you of this change, and your updated score.",
+      "length": 557,
+      "tokens": 204
+    },
+    {
+      "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/apply-permanent-residence.html",
+      "title": "Apply for permanent residence: Express Entry",
+      "content": "You’ll need to update your Express Entry profile with this new scoring information. If you don’t, and you’re invited to apply, it could cause your application to be refused based on incorrect language scores. If you’ve been invited to apply but have not yet submitted your application, please update your scores. If you find that you no longer meet the criteria, you should decline your invitation for that round. If you’ve already applied for permanent residence, the Department may contact you to provide your updated test scores. Follow these steps to fill out the online form: Sign in to your account. Click the link to apply for permanent residence under Express Entry.",
+      "length": 674,
+      "tokens": 130
+    },
+    {
+      "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/apply-permanent-residence.html",
+      "title": "Apply for permanent residence: Express Entry",
+      "content": "When filling out the form: make sure you submit all of the required documents all of your answers must be complete and true make sure all the mandatory fields are completed, or you won’t be able to submit your application you can save your information on the form and go back as often as you need to Fees For your application: $1,525 Include your spouse: $1,525 Include a dependent child: $260 Processing time ? Varies by program You may need to give biometrics with your application. This processing time includes the time you need to give your biometrics. Processing times Processing times will vary based on: the type of application submitted if the application is complete how quickly we expect to process applications we’ve already received how easily we can verify your information how long you take to respond to any requests or concerns other factors More people want to immigrate to Canada than we can bring in each year. Applications received after we meet our yearly limit may have to wait longer to be processed.",
+      "length": 1024,
+      "tokens": 199
+    },
+    {
+      "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/apply-permanent-residence.html",
+      "title": "Apply for permanent residence: Express Entry",
+      "content": "Learn how processing times are calculated. CloseClose overlay (escape key) If your work permit will expire soon If your work permit expires before you submit your application and you didn’t apply for a new one yet, it may cause your score to drop. This could happen if you got points for a job offer but the work permit associated with the job offer expired before you submitted your application. This could cause you to not be eligible anymore. If your score has dropped below the minimum cut-off for your round of invitations, you should decline the invitation. If you submit your application anyway, we’ll refuse it. If you decline, you’ll be put back in the pool. You should update your Express Entry profile to show the change in your work status. Top questions about Express Entry I was found not eligible for Express Entry and I can’t change my profile.",
+      "length": 860,
+      "tokens": 171
+    },
+    {
+      "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/apply-permanent-residence.html",
+      "title": "Apply for permanent residence: Express Entry",
+      "content": "What do I do? Why didn’t I get points for my job offer in Express Entry? I am working in Canada on a valid work permit. Does this count as a job offer? See all questions about this topic Page details Date modified: 2024-05-27.",
       "length": 226,
       "tokens": 57
     },
