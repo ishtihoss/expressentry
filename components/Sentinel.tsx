@@ -14,7 +14,7 @@ const Sentinel = () => {
   useEffect(() => {
     const fetchLatestHeadline = async () => {
       console.log('Fetching latest headline...');
-      console.log('User:', user);
+      
 
       try {
         const parser = new Parser();

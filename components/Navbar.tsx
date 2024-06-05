@@ -17,7 +17,7 @@ export const Navbar: FC = () => {
       window.removeEventListener('USER_SIGNED_IN', handleUserSignedIn as EventListener);
     };
   }, []);
-  
+
   return (
     <nav className="bg-gradient-to-r from-blue-600 to-blue-800 py-4 px-8 shadow-lg">
       <div className="flex items-center justify-between">
@@ -29,7 +29,7 @@ export const Navbar: FC = () => {
             Express Entry Search Engine
           </a>
           {username && (
-            <span className="ml-2 text-white">Welcome, {username}!</span>
+            <span className="ml-2 text-white">Welcome, {username}!</span> //bingo
           )}
         </div>
         <a
