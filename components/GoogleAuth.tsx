@@ -7,15 +7,16 @@ const GoogleAuth = () => {
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (event === 'SIGNED_IN') {
-          setIsSignedIn(true);
-          // Emit an event that the user has signed in
-          window.dispatchEvent(new CustomEvent('USER_SIGNED_IN', { detail: session.user }));
-        } else if (event === 'SIGNED_OUT') {
-          setIsSignedIn(false);
+        if (session) {
+          if (event === 'SIGNED_IN') {
+            setIsSignedIn(true);
+            // Emit an event that the user has signed in
+            window.dispatchEvent(new CustomEvent('USER_SIGNED_IN', { detail: session.user }));
+          } else if (event === 'SIGNED_OUT') {
+            setIsSignedIn(false);
+          }
         }
-      }
-    );
+      });
 
     return () => {
       authListener?.subscription.unsubscribe();
