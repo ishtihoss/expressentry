@@ -11,10 +11,10 @@ export const Navbar: FC = () => {
       setUsername(user.user_metadata.full_name);
     };
 
-    window.addEventListener('USER_SIGNED_IN', handleUserSignedIn as EventListener);
+    window.addEventListener('USER_SIGNED_IN', handleUserSignedIn as EventListener); //bango
 
     return () => {
-      window.removeEventListener('USER_SIGNED_IN', handleUserSignedIn as EventListener);
+      window.removeEventListener('USER_SIGNED_IN', handleUserSignedIn as EventListener); //bango
     };
   }, []);
 

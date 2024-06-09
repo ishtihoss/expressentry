@@ -19,7 +19,7 @@ export default function Home() {
       <Head>
         <meta
           name="description"
-          content={`AI-powered search engine for Express Entry immigration to Canada.`}
+          content={`Get accurate answers to your Express Entry Canada questions instantly. Our AI-powered chatbot provides reliable information and guidance to help you navigate the Express Entry process. Whether you need clarification on eligibility criteria, document requirements, or application steps, our chatbot is here to assist you. Start your journey to Canada with confidence, ask our Express Entry chatbot now!`}
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
