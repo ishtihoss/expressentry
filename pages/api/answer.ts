@@ -1,7 +1,7 @@
 import { OpenAIStream } from "@/utils";
 
 export const config = {
-  runtime: "edge",
+  runtime: "nodejs",
 };
 
 const handler = async (req: Request): Promise<Response> => {
@@ -19,12 +19,9 @@ const handler = async (req: Request): Promise<Response> => {
       return new Response("Bad request: missing prompt", { status: 400 });
     }
 
-    const answer = await OpenAIStream(prompt);
+    const stream = await OpenAIStream(prompt);
 
-    const sentences = answer.match(/[^.!?]+[.!?]/g);
-    const completeAnswer = sentences ? sentences.join(' ') : answer;
-
-    return new Response(completeAnswer, {
+    return new Response(stream, {
       headers: {
         "Content-Type": "text/plain",
         "Cache-Control": "no-cache, no-transform",

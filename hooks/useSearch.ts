@@ -1,4 +1,3 @@
-// hooks/useSearch.ts
 import { useState } from "react";
 import { ExpressEntryChunk } from "@/types";
 import endent from "endent";
