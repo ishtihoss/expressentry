@@ -1,5 +1,6 @@
 .
  |.env
+ |.env.local
  |.eslintrc.json
  |.git
  |.gitignore
@@ -27,6 +28,7 @@
  | |sentinel.module.css
  | |Sentinel.tsx
  | |SettingsModal.tsx
+ |Dockerfile
  |express_entry_data.json
  |file_contents.txt
  |fix.ps1
@@ -92,7 +94,6 @@
  |schema.sql
  |scripts
  | |embed.ts
- | |scraper.py
  |spiderweb.ps1
  |stream-test2.js
  |streaming-test.js
