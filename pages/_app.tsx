@@ -1,11 +1,14 @@
+// pages/_app.tsx
+
 import "../styles/globals.css";
 import { Inter } from "next/font/google";
 import type { AppProps } from "next/app";
-import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from 'next/head';
 import Script from 'next/script';
 import 'tailwindcss/tailwind.css';
+import ProtectedRoute from '../components/ProtectedRoute';
+import React, { useEffect } from 'react';
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
@@ -66,7 +69,9 @@ export default function App({ Component, pageProps }: AppProps<{}>) {
       `}</style>
       <div className="min-h-screen bg-gray-100">
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <Component {...pageProps} />
+          <ProtectedRoute>
+            <Component {...pageProps} />
+          </ProtectedRoute>
         </main>
       </div>
     </>

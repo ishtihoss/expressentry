@@ -1,3 +1,8 @@
+// pages/index.tsx
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { supabase } from '../lib/supabaseClient';
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { SettingsModal } from "@/components/SettingsModal";
@@ -5,7 +10,7 @@ import ExpressEntryChecklist from "@/components/ExpressEntryChecklist";
 import { SearchContainer } from "@/components/SearchContainer";
 import { LogoContainer } from "@/components/LogoContainer";
 import Sentinel from "@/components/Sentinel";
-import GoogleAuth from "@/components/GoogleAuth";
+import GoogleAuth, { useGoogleAuth } from "@/components/GoogleAuth";
 import { useSearch } from "@/hooks/useSearch";
 import { useSettings } from "@/hooks/useSettings";
 import Head from "next/head";
@@ -13,6 +18,16 @@ import Head from "next/head";
 export default function Home() {
   const { query, chunks, answer, loading, handleSearch } = useSearch();
   const { showSettings, matchCount, toggleSettings, handleMatchCountChange, handleSave, handleClear } = useSettings();
+  const router = useRouter();
+  const googleAuth = useGoogleAuth();
+
+  const isSignedIn = googleAuth?.isSignedIn || false;
+
+  useEffect(() => {
+    if (!isSignedIn) {
+      router.push('/SignIn');
+    }
+  }, [isSignedIn]);
 
   return (
     <>
