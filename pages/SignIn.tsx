@@ -1,6 +1,7 @@
 // pages/SignIn.tsx
 
 import GoogleAuth from "../components/GoogleAuth";
+import Link from 'next/link';
 
 export default function SignIn() {
   return (
@@ -14,6 +15,15 @@ export default function SignIn() {
         </p>
         <div className="flex justify-center">
           <GoogleAuth />
+        </div>
+        <div className="mt-6 text-center">
+          <Link href="/privacy">
+            <span className="text-blue-500 hover:underline cursor-pointer">Privacy Policy</span>
+          </Link>
+          <span className="mx-2 text-gray-500">|</span>
+          <Link href="/terms">
+            <span className="text-blue-500 hover:underline cursor-pointer">Terms of Service</span>
+          </Link>
         </div>
       </div>
     </div>
