@@ -1,5 +1,3 @@
-// pages/SignIn.tsx
-
 import GoogleAuth from "../components/GoogleAuth";
 import SignInSentinel from "../components/SignInSentinel";
 import Link from 'next/link';
@@ -8,10 +6,10 @@ export default function SignIn() {
   return (
     <div className="flex items-center justify-center min-h-screen w-full fixed inset-0 bg-gradient-to-r from-blue-500 to-green-500">
       <div className="relative flex items-center justify-center">
-        <div className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2">
+        <div className="absolute top-0 right-0 mt-10 md:mt-0 md:mr-10 lg:mr-20">
           <SignInSentinel />
         </div>
-        <div className="bg-white p-10 rounded-xl shadow-lg w-full max-w-md border-t-8 border-green-500">
+        <div className="bg-white p-10 rounded-xl shadow-lg w-full max-w-md border-t-8 border-green-500 z-10">
           <h1 className="text-4xl font-bold text-center mb-8 font-display text-blue-500">
             Welcome Back!
           </h1>
