@@ -1,11 +1,13 @@
 // pages/SignIn.tsx
 
 import GoogleAuth from "../components/GoogleAuth";
+import SignInSentinel from "../components/SignInSentinel";
 import Link from 'next/link';
 
 export default function SignIn() {
   return (
     <div className="flex items-center justify-center min-h-screen w-full fixed inset-0 bg-gradient-to-r from-blue-500 to-primary">
+      <SignInSentinel />
       <div className="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md transform hover:scale-105 transition duration-300">
         <h1 className="text-3xl font-bold text-center mb-6 font-sans text-primary">
           Welcome Back!
