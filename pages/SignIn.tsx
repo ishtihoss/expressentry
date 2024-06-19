@@ -6,26 +6,31 @@ import Link from 'next/link';
 
 export default function SignIn() {
   return (
-    <div className="flex items-center justify-center min-h-screen w-full fixed inset-0 bg-gradient-to-r from-blue-500 to-primary">
-      <SignInSentinel />
-      <div className="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md transform hover:scale-105 transition duration-300">
-        <h1 className="text-3xl font-bold text-center mb-6 font-sans text-primary">
-          Welcome Back!
-        </h1>
-        <p className="text-center text-gray-600 mb-8 text-lg">
-          Sign in to your account to continue.
-        </p>
-        <div className="flex justify-center">
-          <GoogleAuth />
+    <div className="flex items-center justify-center min-h-screen w-full fixed inset-0 bg-gradient-to-r from-blue-500 to-green-500">
+      <div className="relative flex items-center justify-center">
+        <div className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2">
+          <SignInSentinel />
         </div>
-        <div className="mt-6 text-center">
-          <Link href="/privacy">
-            <span className="text-blue-500 hover:underline cursor-pointer">Privacy Policy</span>
-          </Link>
-          <span className="mx-2 text-gray-500">|</span>
-          <Link href="/terms">
-            <span className="text-blue-500 hover:underline cursor-pointer">Terms of Service</span>
-          </Link>
+        <div className="bg-white p-10 rounded-xl shadow-lg w-full max-w-md border-t-8 border-green-500">
+          <h1 className="text-4xl font-bold text-center mb-8 font-display text-blue-500">
+            Welcome Back!
+          </h1>
+          <p className="text-center text-gray-600 mb-10 text-xl">
+            Sign in to your account to continue.
+          </p>
+          <div className="flex justify-center mb-8">
+            <GoogleAuth />
+          </div>
+          <div className="border-t border-gray-300 pt-6">
+            <div className="flex justify-center space-x-8 text-sm">
+              <Link href="/privacy">
+                <span className="text-gray-600 hover:text-blue-500 cursor-pointer transition duration-300 ease-in-out">Privacy Policy</span>
+              </Link>
+              <Link href="/terms">
+                <span className="text-gray-600 hover:text-blue-500 cursor-pointer transition duration-300 ease-in-out">Terms of Service</span>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>
