@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@next/env": "^13.4.4",
-    "@supabase/supabase-js": "^2.43.1",
+
     "autoprefixer": "^10.4.19",
     "cheerio": "^1.0.0-rc.12",
     "gpt-3-encoder": "^1.1.4",

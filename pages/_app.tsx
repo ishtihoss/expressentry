@@ -4,11 +4,11 @@ import "../styles/globals.css";
 import { Inter } from "next/font/google";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
-import Head from 'next/head';
-import Script from 'next/script';
-import 'tailwindcss/tailwind.css';
-import ProtectedRoute from '../components/ProtectedRoute';
-import React, { useEffect } from 'react';
+import Head from "next/head";
+import Script from "next/script";
+import "tailwindcss/tailwind.css";
+import ProtectedRoute from "../components/ProtectedRoute";
+import React, { useEffect } from "react";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 

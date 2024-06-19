@@ -1,8 +1,8 @@
 // components/GoogleAuth.tsx
 
-import { useEffect, useState, useContext, createContext } from 'react';
-import { supabase } from '../lib/supabaseClient';
-import { useRouter } from 'next/router';
+import { useEffect, useState, useContext, createContext } from "react";
+import { supabase } from "../lib/supabaseClient";
+import { useRouter } from "next/router";
 
 // Define the type for the context
 interface GoogleAuthContextType {
@@ -22,16 +22,19 @@ const GoogleAuth = () => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (session) {
-          if (event === 'SIGNED_IN') {
+          if (event === "SIGNED_IN") {
             setIsSignedIn(true);
-            router.push('/');
+            router.push("/");
             // Emit an event that the user has signed in
-            window.dispatchEvent(new CustomEvent('USER_SIGNED_IN', { detail: session.user }));
-          } else if (event === 'SIGNED_OUT') {
+            window.dispatchEvent(
+              new CustomEvent("USER_SIGNED_IN", { detail: session.user })
+            );
+          } else if (event === "SIGNED_OUT") {
             setIsSignedIn(false);
           }
         }
-      });
+      }
+    );
 
     return () => {
       authListener?.subscription.unsubscribe();
@@ -40,11 +43,11 @@ const GoogleAuth = () => {
 
   const handleGoogleSignIn = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider: "google",
     });
 
     if (error) {
-      console.error('Error signing in with Google:', error.message);
+      console.error("Error signing in with Google:", error.message);
     }
   };
 
@@ -53,10 +56,7 @@ const GoogleAuth = () => {
     <GoogleAuthContext.Provider value={{ isSignedIn }}>
       {isSignedIn ? null : (
         <button onClick={handleGoogleSignIn}>
-          <img
-            src="/PORKOsmall.png"
-            alt="Sign in with Google"
-          />
+          <img src="/PORKOsmall.png" alt="Sign in with Google" />
         </button>
       )}
     </GoogleAuthContext.Provider>

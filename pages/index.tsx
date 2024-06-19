@@ -1,8 +1,8 @@
 // pages/index.tsx
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { supabase } from '../lib/supabaseClient';
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import { supabase } from "../lib/supabaseClient";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { SettingsModal } from "@/components/SettingsModal";
@@ -17,17 +17,18 @@ import Head from "next/head";
 
 export default function Home() {
   const { query, chunks, answer, loading, handleSearch } = useSearch();
-  const { showSettings, matchCount, toggleSettings, handleMatchCountChange, handleSave, handleClear } = useSettings();
+  const {
+    showSettings,
+    matchCount,
+    toggleSettings,
+    handleMatchCountChange,
+    handleSave,
+    handleClear,
+  } = useSettings();
   const router = useRouter();
   const googleAuth = useGoogleAuth();
 
   const isSignedIn = googleAuth?.isSignedIn || false;
-
-  useEffect(() => {
-    if (!isSignedIn) {
-      router.push('/SignIn');
-    }
-  }, [isSignedIn]);
 
   return (
     <>
