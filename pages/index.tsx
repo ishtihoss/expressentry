@@ -10,7 +10,6 @@ import ExpressEntryChecklist from "@/components/ExpressEntryChecklist";
 import { SearchContainer } from "@/components/SearchContainer";
 import { LogoContainer } from "@/components/LogoContainer";
 import Sentinel from "@/components/Sentinel";
-import GoogleAuth, { useGoogleAuth } from "@/components/GoogleAuth";
 import { useSearch } from "@/hooks/useSearch";
 import { useSettings } from "@/hooks/useSettings";
 import Head from "next/head";
@@ -26,9 +25,6 @@ export default function Home() {
     handleClear,
   } = useSettings();
   const router = useRouter();
-  const googleAuth = useGoogleAuth();
-
-  const isSignedIn = googleAuth?.isSignedIn || false;
 
   return (
     <>
@@ -55,9 +51,6 @@ export default function Home() {
               loading={loading}
             />
             <ExpressEntryChecklist />
-            <div className="mt-8 text-center">
-              <GoogleAuth />
-            </div>
           </div>
         </main>
         <Sentinel />
