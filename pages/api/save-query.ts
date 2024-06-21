@@ -22,32 +22,34 @@ export default async function handler(
     }
 
     try {
-      // Save the query
+      // Get the current max query_count for the user
+      const { data: maxCountData, error: maxCountError } = await supabase
+        .from('user_queries')
+        .select('query_count')
+        .eq('user_id', userId)
+        .order('query_count', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (maxCountError) {
+        console.error("Error fetching max query count:", maxCountError);
+        return res.status(500).json({ message: "Error fetching max query count" });
+      }
+
+      const newQueryCount = (maxCountData?.query_count || 0) + 1;
+
+      // Save the query with the incremented count
       const { data: savedQuery, error: saveError } = await supabase
         .from('user_queries')
-        .insert({ user_id: userId, query });
+        .insert({ user_id: userId, query, query_count: newQueryCount });
 
       if (saveError) {
         console.error("Error saving query:", saveError);
         return res.status(500).json({ message: "Error saving query" });
       }
 
-      // Fetch the updated query count
-      const { data: queryCountData, error: countError } = await supabase
-        .from('user_queries')
-        .select('count')
-        .eq('user_id', userId)
-        .single();
-
-      if (countError) {
-        console.error("Error fetching query count:", countError);
-        return res.status(500).json({ message: "Error fetching query count" });
-      }
-
-      const queryCount = queryCountData?.count || 0;
-
       console.log("Query saved successfully");
-      return res.status(200).json({ message: "Query saved successfully", queryCount });
+      return res.status(200).json({ message: "Query saved successfully", queryCount: newQueryCount });
     } catch (error) {
       console.error("Error saving query:", error);
       return res.status(500).json({ message: "Error saving query" });
