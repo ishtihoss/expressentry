@@ -1,37 +1,32 @@
-// pages/api/save-query.ts
 import { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-console.log("Supabase URL:", supabaseUrl);
-console.log("Supabase Anon Key:", supabaseKey);
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  throw new Error("Missing Supabase URL or anon key");
+  throw new Error("Missing Supabase URL or service role key");
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-console.log('Entering pages/api/save-query.ts handler');
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const { query } = req.body;
-    console.log('Received query:', query);
-    console.log("Received query:", query);
+    const { query, userId } = req.body;
 
-    if (!query) {
-      return res.status(400).json({ message: "Query is required" });
+    if (!query || !userId) {
+      return res.status(400).json({ message: "Query and userId are required" });
     }
 
     try {
-      const { data, error } = await supabase
-        .from("user_queries")
-        .insert({ query });
+      // Start a transaction
+      const { data, error } = await supabase.rpc('save_query_and_update_count', {
+        p_query: query,
+        p_user_id: userId
+      });
 
       if (error) {
         console.error("Error saving query:", error);
@@ -39,7 +34,7 @@ export default async function handler(
       }
 
       console.log("Query saved successfully");
-      return res.status(200).json({ message: "Query saved successfully" });
+      return res.status(200).json({ message: "Query saved successfully", queryCount: data });
     } catch (error) {
       console.error("Error saving query:", error);
       return res.status(500).json({ message: "Error saving query" });
