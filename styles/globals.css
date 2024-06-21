@@ -1,64 +1,51 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;600&display=swap');
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* Custom base styles */
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Roboto', 'Helvetica Neue', 'Arial', sans-serif;
-  @apply text-gray-800;
-  background-image: theme('backgroundImage.gradient-radial');
-  background-color: theme('colors.background');
-  --tw-gradient-from: theme('gradientColorStops.fiberglass-start');
-  --tw-gradient-to: theme('gradientColorStops.fiberglass-end');
-  --tw-gradient-stops: var(--tw-gradient-from), theme('gradientColorStops.fiberglass-middle'), var(--tw-gradient-to);
-}
-
-/* Custom component styles */
-.btn {
-  @apply px-4 py-2 rounded-md font-semibold;
-}
-
-.btn-primary {
-  @apply text-white;
-  background: linear-gradient(theme('colors.primary'), theme('colors.primary-dark'));
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-}
-
-.btn-primary:hover {
-  filter: brightness(95%);
-}
-
-.btn-secondary {
-  @apply bg-gray-200 text-gray-800;
-}
-
-.btn-secondary:hover {
-  @apply bg-gray-300;
-}
-
-.search-bar {
-  @apply px-4 py-2 rounded-md;
-  border: 1px solid #d0d0d0;
-}
-
-/* Custom utility styles */
-.transition-fast {
-  transition-duration: 150ms;
-}
-
-.transition-medium {
-  transition-duration: 300ms;
-}
-
-/* Responsive typography */
-@screen sm {
+@layer base {
   html {
+    scroll-behavior: smooth;
     font-size: 16px;
+  }
+
+  body {
+    font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    @apply text-gray-800 bg-background;
+    background-image: radial-gradient(
+      var(--tw-gradient-stops)
+    );
+    --tw-gradient-from: theme('gradientColorStops.fiberglass-start');
+    --tw-gradient-to: theme('gradientColorStops.fiberglass-end');
+    --tw-gradient-stops: var(--tw-gradient-from), theme('gradientColorStops.fiberglass-middle'), var(--tw-gradient-to);
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md font-semibold transition-medium;
+  }
+
+  .btn-primary {
+    @apply text-white bg-gradient-to-b from-primary to-primary-dark shadow-sm hover:brightness-95;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
+  }
+
+  .search-bar {
+    @apply px-4 py-2 rounded-md border border-gray-300;
+  }
+}
+
+@layer utilities {
+  .transition-fast {
+    transition-duration: 150ms;
+  }
+
+  .transition-medium {
+    transition-duration: 300ms;
   }
 }
 
@@ -73,3 +60,4 @@ body {
     font-size: 20px;
   }
 }
+

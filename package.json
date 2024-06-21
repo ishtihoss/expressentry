@@ -40,7 +40,7 @@
     "cheerio": "^1.0.0-rc.12",
     "gpt-3-encoder": "^1.1.4",
     "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.3",
+    "tailwindcss": "^3.4.4",
     "tsx": "^3.12.7"
   }
 }
