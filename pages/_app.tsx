@@ -12,33 +12,41 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [supabaseClient] = useState(() => {
-    try {
-      return createPagesBrowserClient();
-    } catch (error) {
-      console.error("Failed to create Supabase client:", error);
-      return null;
-    }
-  });
+  const [supabaseClient] = useState(() => createPagesBrowserClient());
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
   const isAuthPage = router.pathname === '/SignIn' || router.pathname === '/auth/callback';
 
   useEffect(() => {
-    if (supabaseClient) {
-      supabaseClient.auth.getSession().then(() => {
-        setIsLoading(false);
-      });
-    }
-  }, [supabaseClient]);
+    const checkSession = async () => {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      console.log("Session check:", session ? "Session found" : "No session");
+      
+      if (!session && !isAuthPage) {
+        console.log("No session and not on auth page, redirecting to SignIn");
+        router.push('/SignIn');
+      }
+      setIsLoading(false);
+    };
 
-  if (!supabaseClient) {
-    return <div>Error: Failed to initialize Supabase client</div>;
-  }
+    checkSession();
+
+    const { data: authListener } = supabaseClient.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed:", event);
+      if (event === "SIGNED_OUT" && !isAuthPage) {
+        console.log("User signed out, redirecting to SignIn");
+        router.push('/SignIn');
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [supabaseClient, isAuthPage, router]);
 
   if (isLoading) {
-    return <div>Loading...</div>; // Or a more sophisticated loading component
+    return <div>Loading...</div>;
   }
 
   return (

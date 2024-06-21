@@ -13,17 +13,27 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (user === null && !isLoading) {
-      router.push("/SignIn");
-    } else {
-      setIsLoading(false);
-    }
-  }, [user, isLoading, router]);
-
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_OUT") {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        console.log("No session found in ProtectedRoute, redirecting to SignIn");
         router.push("/SignIn");
+      } else {
+        console.log("Session found in ProtectedRoute, allowing access");
+        setIsLoading(false);
+      }
+    };
+
+    checkUser();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed in ProtectedRoute:", event);
+      if (event === "SIGNED_OUT") {
+        console.log("User signed out in ProtectedRoute, redirecting to SignIn");
+        router.push("/SignIn");
+      } else if (event === "SIGNED_IN" && session) {
+        console.log("User signed in in ProtectedRoute, allowing access");
+        setIsLoading(false);
       }
     });
 
@@ -33,7 +43,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }, [router, supabase.auth]);
 
   if (isLoading) {
-    return <div>Loading...</div>; // Or a more sophisticated loading component
+    return <div>Loading...</div>;
   }
 
   return user ? <>{children}</> : null;
