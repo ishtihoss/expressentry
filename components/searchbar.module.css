@@ -90,6 +90,21 @@
   color: #4b5563;
 }
 
+.queryCountBar {
+  width: 100%;
+  height: 6px;
+  background-color: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 0.25rem;
+}
+
+.queryCountFill {
+  height: 100%;
+  background: linear-gradient(to right, #3b82f6, #8b5cf6);
+  transition: width 0.3s ease-in-out;
+}
+
 @keyframes equalize {
   0% {
     height: 10px;

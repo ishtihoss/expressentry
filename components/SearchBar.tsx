@@ -90,7 +90,13 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       )}
       {user && (
         <div className={styles.queryCount}>
-          Total queries: {queryCount}
+          Queries used: {queryCount} / 20
+          <div className={styles.queryCountBar}>
+            <div 
+              className={styles.queryCountFill} 
+              style={{ width: `${(queryCount / 20) * 100}%` }}
+            ></div>
+          </div>
         </div>
       )}
     </form>
