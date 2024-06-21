@@ -16,7 +16,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
-  const isAuthPage = router.pathname === '/SignIn' || router.pathname === '/auth/callback';
+  const isAuthPage = router.pathname === '/SignIn' || router.pathname === '/auth/callback' || router.pathname === '/subscribe';
 
   useEffect(() => {
     const checkSession = async () => {
