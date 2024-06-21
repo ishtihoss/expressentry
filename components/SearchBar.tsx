@@ -3,10 +3,6 @@ import { KeyboardEvent, useState, useEffect } from "react";
 import { useUser } from '@supabase/auth-helpers-react';
 import styles from "./searchbar.module.css";
 
-declare global {
-  function gtag_report_conversion(url?: string): void;
-}
-
 interface SearchBarProps {
   onSearch: (query: string) => void;
 }
@@ -49,7 +45,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       const data = await response.json();
       setQueryCount(data.queryCount);
       onSearch(query);
-      gtag_report_conversion();
     } catch (error) {
       console.error("Error saving query:", error);
     } finally {

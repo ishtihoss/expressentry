@@ -3,7 +3,27 @@ import SignInSentinel from "../components/SignInSentinel";
 import Link from 'next/link';
 import { useEffect } from 'react';
 
+declare global {
+  function gtag_report_conversion(url?: string): void;
+}
+
 export default function SignIn() {
+  useEffect(() => {
+    // Define the gtag_report_conversion function
+    window.gtag_report_conversion = function(url) {
+      var callback = function () {
+        if (typeof(url) != 'undefined') {
+          window.location = url;
+        }
+      };
+      gtag('event', 'conversion', {
+        'send_to': 'AW-11387636261/01ZGCLj4-7MZEKWUhrYq',
+        'event_callback': callback
+      });
+      return false;
+    }
+  }, []);
+
   return (
     <div className="flex items-center justify-center min-h-screen w-full fixed inset-0 bg-gradient-to-r from-blue-500 to-green-500">
       <div className="relative flex items-center justify-center">
