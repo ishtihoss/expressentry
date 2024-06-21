@@ -24,7 +24,7 @@ export default async function handler(
     try {
       const { data, error } = await supabase
         .from("user_queries")
-        .select("query_count")
+        .select("count")
         .eq("user_id", userId)
         .single();
 
@@ -33,7 +33,7 @@ export default async function handler(
         return res.status(500).json({ message: "Error fetching user stats" });
       }
 
-      return res.status(200).json({ queryCount: data?.query_count || 0 });
+      return res.status(200).json({ queryCount: data?.count || 0 });
     } catch (error) {
       console.error("Error fetching user stats:", error);
       return res.status(500).json({ message: "Error fetching user stats" });

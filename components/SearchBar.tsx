@@ -49,7 +49,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       const data = await response.json();
       setQueryCount(data.queryCount);
       onSearch(query);
-      // Call the gtag_report_conversion function when the search button is clicked
       gtag_report_conversion();
     } catch (error) {
       console.error("Error saving query:", error);

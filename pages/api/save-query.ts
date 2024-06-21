@@ -22,19 +22,32 @@ export default async function handler(
     }
 
     try {
-      // Start a transaction
-      const { data, error } = await supabase.rpc('save_query_and_update_count', {
-        p_query: query,
-        p_user_id: userId
-      });
+      // Save the query
+      const { data: savedQuery, error: saveError } = await supabase
+        .from('user_queries')
+        .insert({ user_id: userId, query });
 
-      if (error) {
-        console.error("Error saving query:", error);
+      if (saveError) {
+        console.error("Error saving query:", saveError);
         return res.status(500).json({ message: "Error saving query" });
       }
 
+      // Fetch the updated query count
+      const { data: queryCountData, error: countError } = await supabase
+        .from('user_queries')
+        .select('count')
+        .eq('user_id', userId)
+        .single();
+
+      if (countError) {
+        console.error("Error fetching query count:", countError);
+        return res.status(500).json({ message: "Error fetching query count" });
+      }
+
+      const queryCount = queryCountData?.count || 0;
+
       console.log("Query saved successfully");
-      return res.status(200).json({ message: "Query saved successfully", queryCount: data });
+      return res.status(200).json({ message: "Query saved successfully", queryCount });
     } catch (error) {
       console.error("Error saving query:", error);
       return res.status(500).json({ message: "Error saving query" });
