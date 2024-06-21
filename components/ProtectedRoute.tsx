@@ -1,44 +1,42 @@
-// components/ProtectedRoute.tsx
-
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { supabase } from "../lib/supabaseClient";
+import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
 
 interface ProtectedRouteProps {
   children: ReactNode;
 }
+
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const router = useRouter();
+  const user = useUser();
+  const supabase = useSupabaseClient();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check initial session
-    const checkSession = async () => {
-      const session = await supabase.auth.getSession();
-      if (!session.data.session) {
+    if (user === null && !isLoading) {
+      router.push("/SignIn");
+    } else {
+      setIsLoading(false);
+    }
+  }, [user, isLoading, router]);
+
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") {
         router.push("/SignIn");
       }
-    };
+    });
 
-    // Listen for auth state changes
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log("Auth event:", event);
-        if (event === "SIGNED_OUT") {
-          router.push("/SignIn");
-        }
-      }
-    );
-
-    // Call checkSession initially
-    checkSession();
-
-    // Clean up listener on component unmount
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, [router, supabase.auth]);
 
-  return <>{children}</>;
+  if (isLoading) {
+    return <div>Loading...</div>; // Or a more sophisticated loading component
+  }
+
+  return user ? <>{children}</> : null;
 };
 
 export default ProtectedRoute;

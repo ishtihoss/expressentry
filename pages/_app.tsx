@@ -1,67 +1,54 @@
-// pages/_app.tsx
-
-import "../styles/globals.css";
-import { Inter } from "next/font/google";
-import type { AppProps } from "next/app";
+import { useState, useEffect } from "react";
+import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
+import { SessionContextProvider } from "@supabase/auth-helpers-react";
+import { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import Script from "next/script";
+import "../styles/globals.css";
 import "tailwindcss/tailwind.css";
 import ProtectedRoute from "../components/ProtectedRoute";
-import React, { useEffect } from "react";
+import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
-export default function App({ Component, pageProps }: AppProps<{}>) {
+function MyApp({ Component, pageProps }: AppProps) {
+  const [supabaseClient] = useState(() => {
+    try {
+      return createPagesBrowserClient();
+    } catch (error) {
+      console.error("Failed to create Supabase client:", error);
+      return null;
+    }
+  });
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+
+  const isAuthPage = router.pathname === '/SignIn' || router.pathname === '/auth/callback';
 
   useEffect(() => {
-    const handleRouteChange = (url: string) => {
-      // Log page views or perform analytics tracking
-      console.log(`Page viewed: ${url}`);
-    };
+    if (supabaseClient) {
+      supabaseClient.auth.getSession().then(() => {
+        setIsLoading(false);
+      });
+    }
+  }, [supabaseClient]);
 
-    router.events.on("routeChangeComplete", handleRouteChange);
+  if (!supabaseClient) {
+    return <div>Error: Failed to initialize Supabase client</div>;
+  }
 
-    return () => {
-      router.events.off("routeChangeComplete", handleRouteChange);
-    };
-  }, [router.events]);
+  if (isLoading) {
+    return <div>Loading...</div>; // Or a more sophisticated loading component
+  }
 
   return (
-    <>
+    <SessionContextProvider
+      supabaseClient={supabaseClient}
+      initialSession={pageProps.initialSession}
+    >
       <Head>
         <title>Express Entry Search Engine</title>
       </Head>
-      <Script
-        src="https://www.googletagmanager.com/gtag/js?id=AW-11387636261"
-        strategy="afterInteractive"
-      />
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){window.dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', 'AW-11387636261');
-        `}
-      </Script>
-      <Script id="gtag-event" strategy="afterInteractive">
-        {`
-          function gtag_report_conversion(url) {
-            var callback = function () {
-              if (typeof(url) != 'undefined') {
-                window.location = url;
-              }
-            };
-            gtag('event', 'conversion', {
-              'send_to': 'AW-11387636261/01ZGCLj4-7MZEKWUhrYq',
-              'event_callback': callback
-            });
-            return false;
-          }
-        `}
-      </Script>
       <style jsx global>{`
         html {
           font-family: ${inter.style.fontFamily};
@@ -69,11 +56,17 @@ export default function App({ Component, pageProps }: AppProps<{}>) {
       `}</style>
       <div className="min-h-screen bg-gray-100">
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <ProtectedRoute>
+          {isAuthPage ? (
             <Component {...pageProps} />
-          </ProtectedRoute>
+          ) : (
+            <ProtectedRoute>
+              <Component {...pageProps} />
+            </ProtectedRoute>
+          )}
         </main>
       </div>
-    </>
+    </SessionContextProvider>
   );
 }
+
+export default MyApp;

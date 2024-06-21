@@ -1,6 +1,7 @@
 import GoogleAuth from "../components/GoogleAuth";
 import SignInSentinel from "../components/SignInSentinel";
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 export default function SignIn() {
   return (
@@ -16,7 +17,7 @@ export default function SignIn() {
           <p className="text-center text-gray-600 mb-10 text-xl">
             Sign in to your account to continue.
           </p>
-          <div className="flex justify-center mb-8">
+          <div className="flex justify-center mb-10">
             <GoogleAuth />
           </div>
           <div className="border-t border-gray-300 pt-6">
