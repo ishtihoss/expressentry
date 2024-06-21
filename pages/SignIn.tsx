@@ -4,19 +4,21 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 
 declare global {
-  function gtag_report_conversion(url?: string): void;
+  interface Window {
+    gtag_report_conversion: (url?: string) => boolean;
+    gtag: (...args: any[]) => void;
+  }
 }
 
 export default function SignIn() {
   useEffect(() => {
-    // Define the gtag_report_conversion function
     window.gtag_report_conversion = function(url) {
-      var callback = function () {
+      const callback = function () {
         if (typeof(url) != 'undefined') {
-          window.location = url;
+          window.location.href = url;
         }
       };
-      gtag('event', 'conversion', {
+      window.gtag('event', 'conversion', {
         'send_to': 'AW-11387636261/01ZGCLj4-7MZEKWUhrYq',
         'event_callback': callback
       });
