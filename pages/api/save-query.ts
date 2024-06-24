@@ -14,47 +14,49 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === "POST") {
-    const { query, userId } = req.body;
+  if (req.method !== "POST") {
+    return res.status(405).json({ message: "Method not allowed" });
+  }
 
-    if (!query || !userId) {
-      return res.status(400).json({ message: "Query and userId are required" });
+  const { query, userId } = req.body;
+
+  if (!query || !userId) {
+    return res.status(400).json({ message: "Query and userId are required" });
+  }
+
+  try {
+    const tableName = userId === 'anonymous' ? 'anonymous_queries' : 'user_queries';
+    
+    // Get the current max query_count for the user or anonymous
+    const { data: maxCountData, error: maxCountError } = await supabase
+      .from(tableName)
+      .select('query_count')
+      .eq('user_id', userId)
+      .order('query_count', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (maxCountError && maxCountError.code !== 'PGRST116') {
+      console.error("Error fetching max query count:", maxCountError);
+      return res.status(500).json({ message: "Error fetching max query count" });
     }
 
-    try {
-      // Get the current max query_count for the user
-      const { data: maxCountData, error: maxCountError } = await supabase
-        .from('user_queries')
-        .select('query_count')
-        .eq('user_id', userId)
-        .order('query_count', { ascending: false })
-        .limit(1)
-        .single();
+    const newQueryCount = (maxCountData?.query_count || 0) + 1;
 
-      if (maxCountError) {
-        console.error("Error fetching max query count:", maxCountError);
-        return res.status(500).json({ message: "Error fetching max query count" });
-      }
+    // Save the query with the incremented count
+    const { data: savedQuery, error: saveError } = await supabase
+      .from(tableName)
+      .insert({ user_id: userId, query, query_count: newQueryCount });
 
-      const newQueryCount = (maxCountData?.query_count || 0) + 1;
-
-      // Save the query with the incremented count
-      const { data: savedQuery, error: saveError } = await supabase
-        .from('user_queries')
-        .insert({ user_id: userId, query, query_count: newQueryCount });
-
-      if (saveError) {
-        console.error("Error saving query:", saveError);
-        return res.status(500).json({ message: "Error saving query" });
-      }
-
-      console.log("Query saved successfully");
-      return res.status(200).json({ message: "Query saved successfully", queryCount: newQueryCount });
-    } catch (error) {
-      console.error("Error saving query:", error);
+    if (saveError) {
+      console.error("Error saving query:", saveError);
       return res.status(500).json({ message: "Error saving query" });
     }
-  } else {
-    return res.status(405).json({ message: "Method not allowed" });
+
+    console.log("Query saved successfully");
+    return res.status(200).json({ message: "Query saved successfully", queryCount: newQueryCount });
+  } catch (error) {
+    console.error("Error saving query:", error);
+    return res.status(500).json({ message: "Error saving query" });
   }
 }

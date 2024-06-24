@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useSearch } from "@/hooks/useSearch";
-import { useQueryCount } from "@/hooks/useQueryCount";
 import { SearchContainer } from "@/components/SearchContainer";
 import { LogoContainer } from "@/components/LogoContainer";
 import GoogleAuth from "@/components/GoogleAuth";
@@ -13,7 +12,7 @@ export default function SignIn() {
   const router = useRouter();
   const supabase = useSupabaseClient();
   const { chunks, answer, loading, error, handleSearch } = useSearch();
-  const { queryCount, incrementQueryCount } = useQueryCount();
+  const [queryCount, setQueryCount] = useState(0);
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
 
   useEffect(() => {
@@ -24,7 +23,36 @@ export default function SignIn() {
       }
     };
     checkSession();
+
+    const storedCount = localStorage.getItem('queryCount');
+    if (storedCount) {
+      setQueryCount(parseInt(storedCount, 10));
+    }
   }, [supabase.auth, router]);
+
+  const incrementQueryCount = () => {
+    const newCount = queryCount + 1;
+    setQueryCount(newCount);
+    localStorage.setItem('queryCount', newCount.toString());
+  };
+
+  const saveQuery = async (searchQuery: string) => {
+    try {
+      const response = await fetch('/api/save-query', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: searchQuery, userId: 'anonymous' }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save query');
+      }
+    } catch (error) {
+      console.error('Error saving query:', error);
+    }
+  };
 
   const handleLimitedSearch = async (searchQuery: string) => {
     if (queryCount >= 3) {
@@ -33,6 +61,7 @@ export default function SignIn() {
     }
     
     incrementQueryCount();
+    await saveQuery(searchQuery);
     await handleSearch(searchQuery);
   };
 
@@ -66,9 +95,9 @@ export default function SignIn() {
 
           {showSignInPrompt && (
             <div role="alert" className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
-            <p className="font-bold">Sign in required</p>
-            <p>You&apos;ve reached the limit of free searches. Please sign in to continue.</p>
-          </div>
+              <p className="font-bold">Sign in required</p>
+              <p>You have reached the limit of free searches. Please sign in to continue.</p>
+            </div>
           )}
 
           <h2 className="text-3xl font-bold text-center text-blue-600">

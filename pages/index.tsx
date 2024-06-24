@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useUser } from '@supabase/auth-helpers-react';
+import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
 import Head from "next/head";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
@@ -26,11 +26,42 @@ export default function Home() {
   } = useSettings();
   const router = useRouter();
   const user = useUser();
-  const { queryCount, incrementQueryCount } = useQueryCount();
+  const supabase = useSupabaseClient();
+  const { queryCount, incrementQueryCount, resetQueryCount } = useQueryCount();
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      resetQueryCount(); // Reset query count when user logs in
+    }
+  }, [user, resetQueryCount]);
 
   const handleSubscribe = () => {
     router.push('/subscribe');
+  };
+
+  const saveQuery = async (searchQuery: string) => {
+    try {
+      const response = await fetch('/api/save-query', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          query: searchQuery, 
+          userId: user ? user.id : 'anonymous' 
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save query');
+      }
+
+      const data = await response.json();
+      console.log('Query saved successfully:', data);
+    } catch (error) {
+      console.error('Error saving query:', error);
+    }
   };
 
   const handleSearch = async (searchQuery: string) => {
@@ -39,9 +70,12 @@ export default function Home() {
       return;
     }
     
+    await saveQuery(searchQuery);
+    
     if (!user) {
       incrementQueryCount();
     }
+
     await originalHandleSearch(searchQuery);
   };
 
