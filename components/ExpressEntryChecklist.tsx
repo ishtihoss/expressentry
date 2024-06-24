@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FaClipboardList, FaSave } from "react-icons/fa";
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
 
@@ -19,7 +19,6 @@ const ExpressEntryChecklist = () => {
   const supabase = useSupabaseClient();
 
   const streams: Stream[] = ['FSWP', 'FSTP', 'CEC', 'PNP'];
-
 
   const checklists: Record<Stream, string[]> = {
     FSWP: [
@@ -86,13 +85,7 @@ const ExpressEntryChecklist = () => {
     ],
   };
 
-  useEffect(() => {
-    if (user) {
-      loadProgress();
-    }
-  }, [user]);
-
-  const loadProgress = async () => {
+  const loadProgress = useCallback(async () => {
     if (!user) return;
 
     const { data, error } = await supabase
@@ -106,7 +99,13 @@ const ExpressEntryChecklist = () => {
     } else if (data) {
       setCheckedItems(data.progress);
     }
-  };
+  }, [user, supabase]);
+
+  useEffect(() => {
+    if (user) {
+      loadProgress();
+    }
+  }, [user, loadProgress]);
 
   const handleStreamClick = (stream: Stream) => {
     setSelectedStream(stream);
@@ -158,7 +157,6 @@ const ExpressEntryChecklist = () => {
     const checkedCount = checkedItems[stream].filter(Boolean).length;
     return (checkedCount / totalItems) * 100;
   };
-
 
   const containerVariants = {
     hidden: { opacity: 0, scale: 0.8 },

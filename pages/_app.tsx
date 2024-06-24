@@ -16,7 +16,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
-  const isAuthPage = router.pathname === '/SignIn' || router.pathname === '/auth/callback' || router.pathname === '/subscribe';
+  const isAuthPage = ['/SignIn', '/auth/callback', '/subscribe'].includes(router.pathname);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -34,7 +34,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 
     const { data: authListener } = supabaseClient.auth.onAuthStateChange((event, session) => {
       console.log("Auth state changed:", event);
-      if (event === "SIGNED_OUT" && !isAuthPage) {
+      if (event === "SIGNED_IN" && session) {
+        console.log("User signed in, redirecting to home");
+        router.push('/');
+      } else if (event === "SIGNED_OUT" && !isAuthPage) {
         console.log("User signed out, redirecting to SignIn");
         router.push('/SignIn');
       }
@@ -56,6 +59,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     >
       <Head>
         <title>Express Entry Search Engine</title>
+        <meta name="description" content="AI-powered Express Entry search engine" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       <style jsx global>{`
         html {

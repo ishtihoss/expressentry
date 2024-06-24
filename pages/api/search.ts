@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "@/utils";
+import { rateLimiter } from "@/utils/rateLimiter";
 
 export const config = {
   runtime: "edge",
@@ -15,6 +16,27 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Apply rate limiting
+    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+    const { success, limit, remaining, reset } = await rateLimiter(ip);
+
+    if (!success) {
+      return new Response(JSON.stringify({
+        error: "Rate limit exceeded",
+        limit,
+        remaining,
+        reset
+      }), {
+        status: 429,
+        headers: {
+          "Content-Type": "application/json",
+          "X-RateLimit-Limit": limit.toString(),
+          "X-RateLimit-Remaining": remaining.toString(),
+          "X-RateLimit-Reset": reset.toString()
+        }
+      });
+    }
+
     const body = await req.json();
     const { query, matches } = body;
 
@@ -36,7 +58,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
       method: "POST",
       body: JSON.stringify({
-        model: "text-embedding-3-small", //this was a game changer
+        model: "text-embedding-3-small",
         input,
       }),
     });
@@ -49,7 +71,6 @@ const handler = async (req: Request): Promise<Response> => {
     const json = await openAIResponse.json();
     console.log('Full OpenAI API Response:', JSON.stringify(json, null, 2));
 
-    // Verify the structure of the response and extract the embedding
     if (!json.data || !json.data[0] || !json.data[0].embedding) {
       console.error("Unexpected OpenAI API response structure:", JSON.stringify(json, null, 2));
       return new Response("Error processing embeddings", { status: 500 });
@@ -68,17 +89,15 @@ const handler = async (req: Request): Promise<Response> => {
       return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { "Content-Type": "application/json" } });
     }
 
-    // Fetch full chunk data for each id
     const chunks = await Promise.all(chunkIds.map(async ({ id }: ChunkId) => {
       const { data: chunk, error } = await supabaseAdmin
-        .from('chunks') // Replace with your table name
+        .from('chunks')
         .select('*')
         .eq('id', id)
         .single();
 
       if (error) {
         console.error(`Error fetching chunk with id ${id}:`, error);
-        // Handle error appropriately
       }
 
       return chunk;
@@ -89,6 +108,9 @@ const handler = async (req: Request): Promise<Response> => {
       headers: {
         "Content-Type": "application/json",
         "Cache-Control": "no-cache, no-store, must-revalidate",
+        "X-RateLimit-Limit": limit.toString(),
+        "X-RateLimit-Remaining": remaining.toString(),
+        "X-RateLimit-Reset": reset.toString()
       },
     });
   } catch (error) {

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useUser } from '@supabase/auth-helpers-react';
 import Head from "next/head";
@@ -12,9 +12,10 @@ import Sentinel from "@/components/Sentinel";
 import { SubscribeButton } from "@/components/SubscribeButton";
 import { useSearch } from "@/hooks/useSearch";
 import { useSettings } from "@/hooks/useSettings";
+import { useQueryCount } from "@/hooks/useQueryCount";
 
 export default function Home() {
-  const { query, chunks, answer, loading, handleSearch } = useSearch();
+  const { query, chunks, answer, loading, error, handleSearch: originalHandleSearch } = useSearch();
   const {
     showSettings,
     matchCount,
@@ -25,9 +26,23 @@ export default function Home() {
   } = useSettings();
   const router = useRouter();
   const user = useUser();
+  const { queryCount, incrementQueryCount } = useQueryCount();
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
 
   const handleSubscribe = () => {
     router.push('/subscribe');
+  };
+
+  const handleSearch = async (searchQuery: string) => {
+    if (!user && queryCount >= 3) {
+      setShowSignInPrompt(true);
+      return;
+    }
+    
+    if (!user) {
+      incrementQueryCount();
+    }
+    await originalHandleSearch(searchQuery);
   };
 
   return (
@@ -54,17 +69,28 @@ export default function Home() {
             <div className="text-center mb-8">
               <LogoContainer />
             </div>
-            {user && (
-              <div className="flex justify-end mb-4">
-                <SubscribeButton onClick={handleSubscribe} />
-              </div>
-            )}
             <SearchContainer
               onSearch={handleSearch}
               chunks={chunks}
               answer={answer}
               loading={loading}
+              error={error}
+              remainingQueries={user ? undefined : 3 - queryCount}
+              showSignInPrompt={showSignInPrompt}
             />
+            {showSignInPrompt && (
+              <div className="mt-4 p-4 bg-yellow-100 rounded-md">
+                <p className="text-sm text-yellow-700">
+                  You have reached the limit of free queries. Please sign in to continue using the app.
+                </p>
+                <button
+                  className="mt-2 btn btn-primary"
+                  onClick={() => router.push('/signin')}
+                >
+                  Sign In
+                </button>
+              </div>
+            )}
             <ExpressEntryChecklist />
           </div>
         </main>

@@ -1,6 +1,7 @@
 /* components/SearchBar.module.css */
 .searchForm {
   position: relative;
+  animation: fadeIn 0.3s ease-in-out;
 }
 
 .searchInput {
@@ -16,7 +17,7 @@
 
 .searchInput:focus {
   border-color: transparent;
-  box-shadow: 0 0 0 2px #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
 }
 
 .searchButton {
@@ -28,15 +29,45 @@
   font-weight: bold;
   padding: 0.5rem 1rem;
   border-radius: 0.25rem;
+  transition: transform 0.1s ease-in-out;
 }
 
 .searchButton:hover {
   background: linear-gradient(to right, #2563eb, #7c3aed);
+  transform: scale(1.05);
+}
+
+.searchButton:active {
+  transform: scale(0.95);
 }
 
 .searchIcon {
   height: 1.5rem;
   width: 1.5rem;
+}
+
+.suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-top: none;
+  border-radius: 0 0 0.375rem 0.375rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.suggestions li {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.suggestions li:hover {
+  background-color: #f3f4f6;
 }
 
 .equalizerContainer {
@@ -64,25 +95,11 @@
   animation: equalize 1.5s ease-in-out infinite;
 }
 
-.equalizer span:nth-child(1) {
-  animation-delay: -1.4s;
-}
-
-.equalizer span:nth-child(2) {
-  animation-delay: -1.2s;
-}
-
-.equalizer span:nth-child(3) {
-  animation-delay: -1s;
-}
-
-.equalizer span:nth-child(4) {
-  animation-delay: -0.8s;
-}
-
-.equalizer span:nth-child(5) {
-  animation-delay: -0.6s;
-}
+.equalizer span:nth-child(1) { animation-delay: -1.4s; }
+.equalizer span:nth-child(2) { animation-delay: -1.2s; }
+.equalizer span:nth-child(3) { animation-delay: -1s; }
+.equalizer span:nth-child(4) { animation-delay: -0.8s; }
+.equalizer span:nth-child(5) { animation-delay: -0.6s; }
 
 .queryCount {
   margin-top: 0.5rem;
@@ -106,13 +123,11 @@
 }
 
 @keyframes equalize {
-  0% {
-    height: 10px;
-  }
-  50% {
-    height: 20px;
-  }
-  100% {
-    height: 10px;
-  }
+  0%, 100% { height: 10px; }
+  50% { height: 20px; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

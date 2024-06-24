@@ -1,55 +1,32 @@
+import React, { useState, KeyboardEvent } from "react";
 import { IconSearch } from "@tabler/icons-react";
-import { KeyboardEvent, useState, useEffect } from "react";
-import { useUser } from '@supabase/auth-helpers-react';
 import styles from "./searchbar.module.css";
 
 interface SearchBarProps {
-  onSearch: (query: string) => void;
+  onSearch: (searchQuery: string) => void;
+  value: string;
+  onChange: (value: string) => void;
 }
 
-export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-  const [query, setQuery] = useState("");
+const commonQuestions = [
+  "What is Express Entry?",
+  "How do I qualify for Express Entry?",
+  "What are the requirements for FSWP?",
+  "How long does the Express Entry process take?",
+  "What is the CRS score?",
+];
+
+export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, value, onChange }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [queryCount, setQueryCount] = useState(0);
-  const user = useUser();
-
-  useEffect(() => {
-    if (user) {
-      fetchUserStats();
-    }
-  }, [user]);
-
-  const fetchUserStats = async () => {
-    if (!user) return;
-    try {
-      const response = await fetch(`/api/user-stats?userId=${user.id}`);
-      const data = await response.json();
-      setQueryCount(data.queryCount);
-    } catch (error) {
-      console.error("Error fetching user stats:", error);
-    }
-  };
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (value.trim() === "") return;
+
     setIsLoading(true);
-    try {
-      const response = await fetch("/api/save-query", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query, userId: user.id }),
-      });
-      const data = await response.json();
-      setQueryCount(data.queryCount);
-      onSearch(query);
-    } catch (error) {
-      console.error("Error saving query:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    await onSearch(value);
+    setIsLoading(false);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -58,41 +35,47 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     }
   };
 
+  const filteredSuggestions = commonQuestions.filter(question =>
+    question.toLowerCase().includes(value.toLowerCase())
+  );
+
   return (
     <form onSubmit={handleSubmit} className={styles.searchForm}>
       <input
         id="search-input"
         className={styles.searchInput}
         type="text"
-        placeholder="Ask a question about Express Entry..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        placeholder="E.g., What are the requirements for Express Entry?"
+        value={value}
+        onChange={(e) => {
+          onChange(e.target.value);
+          setShowSuggestions(true);
+        }}
         onKeyDown={handleKeyDown}
+        onFocus={() => setShowSuggestions(true)}
+        onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
       />
-      <button type="submit" className={styles.searchButton}>
-        <IconSearch className={styles.searchIcon} />
+      <button type="submit" className={styles.searchButton} disabled={isLoading}>
+        {isLoading ? (
+          <div className={styles.loadingSpinner}></div>
+        ) : (
+          <IconSearch className={styles.searchIcon} />
+        )}
       </button>
-      {isLoading && (
-        <div className={styles.equalizerContainer}>
-          <div className={styles.equalizer}>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        </div>
-      )}
-      {user && (
-        <div className={styles.queryCount}>
-          Queries used: {queryCount} / 20
-          <div className={styles.queryCountBar}>
-            <div 
-              className={styles.queryCountFill} 
-              style={{ width: `${(queryCount / 20) * 100}%` }}
-            ></div>
-          </div>
-        </div>
+      {showSuggestions && filteredSuggestions.length > 0 && (
+        <ul className={styles.suggestions}>
+          {filteredSuggestions.map((suggestion, index) => (
+            <li
+              key={index}
+              onClick={() => {
+                onChange(suggestion);
+                setShowSuggestions(false);
+              }}
+            >
+              {suggestion}
+            </li>
+          ))}
+        </ul>
       )}
     </form>
   );

@@ -1,4 +1,5 @@
 import { OpenAIStream } from "@/utils";
+import { rateLimiter } from "@/utils/rateLimiter";
 
 export const config = {
   runtime: "edge",
@@ -11,6 +12,27 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Apply rate limiting
+    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+    const { success, limit, remaining, reset } = await rateLimiter(ip);
+
+    if (!success) {
+      return new Response(JSON.stringify({
+        error: "Rate limit exceeded",
+        limit,
+        remaining,
+        reset
+      }), {
+        status: 429,
+        headers: {
+          "Content-Type": "application/json",
+          "X-RateLimit-Limit": limit.toString(),
+          "X-RateLimit-Remaining": remaining.toString(),
+          "X-RateLimit-Reset": reset.toString()
+        }
+      });
+    }
+
     const { prompt } = (await req.json()) as {
       prompt: string;
     };
@@ -28,6 +50,9 @@ const handler = async (req: Request): Promise<Response> => {
       headers: {
         "Content-Type": "text/plain",
         "Cache-Control": "no-cache, no-transform",
+        "X-RateLimit-Limit": limit.toString(),
+        "X-RateLimit-Remaining": remaining.toString(),
+        "X-RateLimit-Reset": reset.toString()
       },
     });
   } catch (error: unknown) {
