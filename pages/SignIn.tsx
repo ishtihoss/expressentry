@@ -109,14 +109,24 @@ export default function SignIn() {
           <div className="flex justify-center">
             <GoogleAuth />
           </div>
-          <nav className="text-center space-x-4">
-            <Link href="/privacy" className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-200">
-              Privacy Policy
-            </Link>
-            <span className="text-gray-300" aria-hidden="true">|</span>
-            <Link href="/terms" className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-200">
-              Terms of Service
-            </Link>
+          <nav className="mt-6">
+            <ul className="flex justify-center space-x-4">
+              <li>
+                <Link href="/privacy" className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-200">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-200">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link href="/resources" className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-200">
+                  Resources
+                </Link>
+              </li>
+            </ul>
           </nav>
         </div>
 

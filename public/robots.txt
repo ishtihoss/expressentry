@@ -1,9 +1,6 @@
-# *
+# Allow all user agents
 User-agent: *
 Allow: /
-
-# Host
-Host: https://expressentry.ca
 
 # Sitemaps
 Sitemap: https://expressentry.ca/sitemap.xml

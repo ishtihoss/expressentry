@@ -16,7 +16,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
-  const publicPages = ['/SignIn', '/auth/callback', '/privacy', '/terms'];
+  const publicPages = ['/SignIn', '/auth/callback', '/privacy', '/terms', '/resources'];
   const isPublicPage = publicPages.includes(router.pathname);
 
   useEffect(() => {
