@@ -69,11 +69,11 @@ export default function SignIn() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-500 to-green-500 p-4 flex flex-col items-center justify-center relative">
-      <div className="absolute top-4 right-4">
-        <Link href="/blog" className="text-white hover:text-green-200 transition-colors duration-200 font-semibold">
-          Blog
+        <div className="absolute top-4 right-12">
+        <Link href="/blog" className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg text-white border border-white border-opacity-30 hover:bg-opacity-30 transition-all duration-300 font-semibold py-2 px-6 rounded-full shadow-lg">
+        Blog
         </Link>
-      </div>
+    </div>
       <div className="w-full max-w-4xl space-y-8">
         <LogoContainer />
         
