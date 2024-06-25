@@ -16,15 +16,16 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
-  const isAuthPage = ['/SignIn', '/auth/callback', '/subscribe'].includes(router.pathname);
+  const publicPages = ['/SignIn', '/auth/callback', '/privacy', '/terms'];
+  const isPublicPage = publicPages.includes(router.pathname);
 
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabaseClient.auth.getSession();
       console.log("Session check:", session ? "Session found" : "No session");
       
-      if (!session && !isAuthPage) {
-        console.log("No session and not on auth page, redirecting to SignIn");
+      if (!session && !isPublicPage) {
+        console.log("No session and not on public page, redirecting to SignIn");
         router.push('/SignIn');
       }
       setIsLoading(false);
@@ -37,7 +38,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       if (event === "SIGNED_IN" && session) {
         console.log("User signed in, redirecting to home");
         router.push('/');
-      } else if (event === "SIGNED_OUT" && !isAuthPage) {
+      } else if (event === "SIGNED_OUT" && !isPublicPage) {
         console.log("User signed out, redirecting to SignIn");
         router.push('/SignIn');
       }
@@ -46,7 +47,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, [supabaseClient, isAuthPage, router]);
+  }, [supabaseClient, isPublicPage, router]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -69,7 +70,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       `}</style>
       <div className="min-h-screen bg-gray-100">
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          {isAuthPage ? (
+          {isPublicPage ? (
             <Component {...pageProps} />
           ) : (
             <ProtectedRoute>
