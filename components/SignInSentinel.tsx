@@ -26,7 +26,7 @@ const SignInSentinel = () => {
         }`}
       />
       <div className={styles.speechBubble}>
-        <p>You need to sign in to access this page. We request this to prevent abuse from bots.</p>
+        <p>Sign in for unlimited queries and full access to all features.</p>
       </div>
     </div>
   );

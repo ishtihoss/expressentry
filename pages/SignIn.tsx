@@ -68,7 +68,12 @@ export default function SignIn() {
   const remainingQueries = 3 - queryCount;
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-green-500 p-4 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-green-500 p-4 flex flex-col items-center justify-center relative">
+      <div className="absolute top-4 right-4">
+        <Link href="/blog" className="text-white hover:text-green-200 transition-colors duration-200 font-semibold">
+          Blog
+        </Link>
+      </div>
       <div className="w-full max-w-4xl space-y-8">
         <LogoContainer />
         

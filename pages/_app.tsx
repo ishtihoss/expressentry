@@ -11,43 +11,53 @@ import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
+const isPublicPage = (path: string) => {
+  const publicPages = ['/SignIn', '/auth/callback', '/privacy', '/terms', '/resources'];
+  return publicPages.includes(path) || path.startsWith('/blog');
+};
+
 function MyApp({ Component, pageProps }: AppProps) {
   const [supabaseClient] = useState(() => createPagesBrowserClient());
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
-  const publicPages = ['/SignIn', '/auth/callback', '/privacy', '/terms', '/resources'];
-  const isPublicPage = publicPages.includes(router.pathname);
+  const handleHardNavigation = async () => {
+    if (!router.isReady) return;
+    
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    console.log("Hard navigation check:", session ? "Session found" : "No session");
+
+    if (!session && !isPublicPage(router.pathname)) {
+      console.log("No session and not on public page, redirecting to SignIn");
+      router.push('/SignIn', undefined, { shallow: true });
+    } else {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      console.log("Session check:", session ? "Session found" : "No session");
-      
-      if (!session && !isPublicPage) {
-        console.log("No session and not on public page, redirecting to SignIn");
-        router.push('/SignIn');
-      }
-      setIsLoading(false);
-    };
-
-    checkSession();
-
     const { data: authListener } = supabaseClient.auth.onAuthStateChange((event, session) => {
       console.log("Auth state changed:", event);
       if (event === "SIGNED_IN" && session) {
         console.log("User signed in, redirecting to home");
-        router.push('/');
-      } else if (event === "SIGNED_OUT" && !isPublicPage) {
+        router.push('/', undefined, { shallow: true });
+      } else if (event === "SIGNED_OUT" && !isPublicPage(router.pathname)) {
         console.log("User signed out, redirecting to SignIn");
-        router.push('/SignIn');
+        router.push('/SignIn', undefined, { shallow: true });
       }
+      setIsLoading(false);
     });
 
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, [supabaseClient, isPublicPage, router]);
+  }, [supabaseClient, router]);
+
+  useEffect(() => {
+    if (router.isReady) {
+      handleHardNavigation();
+    }
+  }, [router.isReady, router.pathname]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -70,7 +80,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       `}</style>
       <div className="min-h-screen bg-gray-100">
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          {isPublicPage ? (
+          {isPublicPage(router.pathname) ? (
             <Component {...pageProps} />
           ) : (
             <ProtectedRoute>
