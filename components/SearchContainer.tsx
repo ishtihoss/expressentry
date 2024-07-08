@@ -154,8 +154,8 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({
       {showSignInPrompt && user && (
         <div className="mt-4 p-4 bg-yellow-100 rounded-md">
           <p className="text-sm text-yellow-700">
-            You have reached the limit of free queries. Please Upgrade your plan
-            to continue using the app.
+            Please subscribe to continue, you have used up your free 20
+            questions
           </p>
         </div>
       )}
