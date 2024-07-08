@@ -134,13 +134,15 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({
           <div className="w-full bg-gray-200 rounded-full h-2.5">
             <div
               className="bg-blue-600 h-2.5 rounded-full"
-              style={{ width: `${(remainingQueries / 3) * 100}%` }}
+              style={{
+                width: `${(remainingQueries / (user ? 20 : 3)) * 100}%`,
+              }}
             ></div>
           </div>
         </div>
       )}
 
-      {showSignInPrompt && (
+      {showSignInPrompt && !user && (
         <div className="mt-4 p-4 bg-yellow-100 rounded-md">
           <p className="text-sm text-yellow-700">
             You have reached the limit of free queries. Please sign in to
@@ -149,11 +151,22 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({
         </div>
       )}
 
+      {showSignInPrompt && user && (
+        <div className="mt-4 p-4 bg-yellow-100 rounded-md">
+          <p className="text-sm text-yellow-700">
+            You have reached the limit of free queries. Please Upgrade your plan
+            to continue using the app.
+          </p>
+        </div>
+      )}
+
       {error && (
         <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-md">
           {error}
           <button
-            onClick={() => onSearch(searchQuery)}
+            onClick={async () => {
+              onSearch(searchQuery);
+            }}
             className="ml-2 underline hover:text-red-800"
           >
             Try again

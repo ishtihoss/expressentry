@@ -54,6 +54,7 @@ export default function Home() {
   const [feedbackArray, setFeedbackArray] = useState<string[]>([]);
   const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
   const [isErrorFeedback, setIsErrorFeedback] = useState(false);
+  const [remainingQueries, setRemainingQueries] = useState(0);
 
   const onDrop = useCallback(async (acceptedFiles: any) => {
     // Do something with the files
@@ -99,7 +100,7 @@ export default function Home() {
       } = await supabaseClient.auth.getSession();
 
       if (session && session.user) {
-        await getSubscription(session.access_token);
+        await getSubscription();
       }
 
       setSession(session);
@@ -109,10 +110,13 @@ export default function Home() {
     getSessionAndSubscription();
   }, [router]);
 
-  const getSubscription = async (accessToken: string) => {
+  const getSubscription = async () => {
+    const {
+      data: { session },
+    } = await supabaseClient.auth.getSession();
     const res = await fetch("/api/subscription", {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     });
 
@@ -120,6 +124,7 @@ export default function Home() {
 
     console.log("Subscription data:", data);
 
+    setRemainingQueries(data.count);
     if (data.isSubscribed) {
       setSubscription(data.subscription);
     } else {
@@ -162,7 +167,14 @@ export default function Home() {
   };
 
   const handleSearch = async (searchQuery: string) => {
+    setShowSignInPrompt(false);
+
     if (!user && queryCount >= 3) {
+      setShowSignInPrompt(true);
+      return;
+    }
+
+    if (user && remainingQueries <= 0) {
       setShowSignInPrompt(true);
       return;
     }
@@ -171,6 +183,10 @@ export default function Home() {
 
     if (!user) {
       incrementQueryCount();
+    }
+
+    if (user) {
+      await getSubscription();
     }
 
     await originalHandleSearch(searchQuery);
@@ -272,14 +288,14 @@ export default function Home() {
                 answer={answer}
                 loading={loading}
                 error={error}
-                remainingQueries={user ? undefined : 3 - queryCount}
+                remainingQueries={20 - remainingQueries}
                 showSignInPrompt={showSignInPrompt}
                 isSubscribed={subscription !== null}
                 isLoading={isLoading}
               />
             </div>
 
-            {showSignInPrompt && (
+            {showSignInPrompt && !user && (
               <div className="mt-4 p-4 bg-yellow-100 rounded-md">
                 <p className="text-sm text-yellow-700">
                   You have reached the limit of free queries. Please sign in to

@@ -48,18 +48,26 @@ const handler = async (req: Request) : Promise<Response> => {
         const data = await supabaseAdmin.from
         
         ('subscriptions').select('*').eq('status', 'active').eq('customer_id', user.id).single();
-        console.log("🚀 ~ handler ~ data:", data)
+
+
+        const userRemainingQueries = await supabaseAdmin.from('user_queries')
+        .select('*', { count: 'exact' })
+        .eq('user_id', user.id)
+
+        console.log('userRemainingQueries', userRemainingQueries)
 
         if (!data || data.error) {
 
             return NextResponse.json( {
                 isSubscribed : false,
-                subscription : null
-            },{status: 404})
+                subscription : null,
+                count : userRemainingQueries.count
+            },{status: 200})
         }
         
         return NextResponse.json( {
             isSubscribed : true,
+            count : userRemainingQueries.count,
             subscription : data
         },{status: 200})
         
