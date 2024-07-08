@@ -124,7 +124,7 @@ export default function Home() {
 
     console.log("Subscription data:", data);
 
-    setRemainingQueries(data.count);
+    setRemainingQueries(20 - data.count < 0 ? 0 : 20 - data.count);
     if (data.isSubscribed) {
       setSubscription(data.subscription);
     } else {
@@ -174,7 +174,7 @@ export default function Home() {
       return;
     }
 
-    if (user && remainingQueries <= 0) {
+    if (user && !subscription && remainingQueries <= 0) {
       setShowSignInPrompt(true);
       return;
     }
@@ -185,7 +185,7 @@ export default function Home() {
       incrementQueryCount();
     }
 
-    if (user) {
+    if (user && !subscription) {
       await getSubscription();
     }
 
@@ -288,7 +288,7 @@ export default function Home() {
                 answer={answer}
                 loading={loading}
                 error={error}
-                remainingQueries={20 - remainingQueries}
+                remainingQueries={remainingQueries}
                 showSignInPrompt={showSignInPrompt}
                 isSubscribed={subscription !== null}
                 isLoading={isLoading}
