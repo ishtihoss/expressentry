@@ -5,7 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 export const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
 // Initialize OpenAI client
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+export const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const responseCache = new Map<string, string>();
 

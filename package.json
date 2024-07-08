@@ -11,6 +11,7 @@
     "embed": "tsx scripts/embed.ts"
   },
   "dependencies": {
+    "@paypal/react-paypal-js": "^8.5.0",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/auth-helpers-react": "^0.5.0",
     "@tabler/icons-react": "^2.8.0",
@@ -20,6 +21,7 @@
     "@types/react": "18.2.7",
     "@types/react-dom": "18.2.4",
     "axios": "^1.4.0",
+    "buffer-crc32": "^1.0.0",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "endent": "^2.1.0",
@@ -33,7 +35,10 @@
     "openai": "^4.47.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-dropzone": "^14.2.3",
     "react-icons": "^5.2.1",
+    "react-loader-spinner": "^6.1.6",
+    "react-type-animation": "^3.2.0",
     "remark": "^15.0.1",
     "remark-html": "^16.0.1",
     "rss-parser": "^3.13.0",

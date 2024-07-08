@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useSearch } from "@/hooks/useSearch";
 import { SearchContainer } from "@/components/SearchContainer";
 import { LogoContainer } from "@/components/LogoContainer";
@@ -17,14 +17,16 @@ export default function SignIn() {
 
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session) {
-        router.push('/');
+        router.push("/");
       }
     };
     checkSession();
 
-    const storedCount = localStorage.getItem('queryCount');
+    const storedCount = localStorage.getItem("queryCount");
     if (storedCount) {
       setQueryCount(parseInt(storedCount, 10));
     }
@@ -33,24 +35,24 @@ export default function SignIn() {
   const incrementQueryCount = () => {
     const newCount = queryCount + 1;
     setQueryCount(newCount);
-    localStorage.setItem('queryCount', newCount.toString());
+    localStorage.setItem("queryCount", newCount.toString());
   };
 
   const saveQuery = async (searchQuery: string) => {
     try {
-      const response = await fetch('/api/save-query', {
-        method: 'POST',
+      const response = await fetch("/api/save-query", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query: searchQuery, userId: 'anonymous' }),
+        body: JSON.stringify({ query: searchQuery, userId: "anonymous" }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save query');
+        throw new Error("Failed to save query");
       }
     } catch (error) {
-      console.error('Error saving query:', error);
+      console.error("Error saving query:", error);
     }
   };
 
@@ -59,7 +61,7 @@ export default function SignIn() {
       setShowSignInPrompt(true);
       return;
     }
-    
+
     incrementQueryCount();
     await saveQuery(searchQuery);
     await handleSearch(searchQuery);
@@ -69,14 +71,17 @@ export default function SignIn() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-500 to-green-500 p-4 flex flex-col items-center justify-center relative">
-        <div className="absolute top-4 right-12">
-        <Link href="/blog" className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg text-white border border-white border-opacity-30 hover:bg-opacity-30 transition-all duration-300 font-semibold py-2 px-6 rounded-full shadow-lg">
-        Blog
+      <div className="absolute top-4 right-12">
+        <Link
+          href="/blog"
+          className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg text-white border border-white border-opacity-30 hover:bg-opacity-30 transition-all duration-300 font-semibold py-2 px-6 rounded-full shadow-lg"
+        >
+          Blog
         </Link>
-    </div>
+      </div>
       <div className="w-full max-w-4xl space-y-8">
         <LogoContainer />
-        
+
         <h1 className="text-4xl font-bold text-center text-white mb-8">
           Express Entry Search Engine
         </h1>
@@ -84,7 +89,8 @@ export default function SignIn() {
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden p-8 space-y-6">
           <div className="text-center mb-4">
             <p className="text-lg font-semibold text-blue-600">
-              Remaining free searches: <span className="text-2xl">{remainingQueries}</span>
+              Remaining free searches:{" "}
+              <span className="text-2xl">{remainingQueries}</span>
             </p>
           </div>
 
@@ -96,12 +102,20 @@ export default function SignIn() {
             error={error}
             remainingQueries={remainingQueries}
             showSignInPrompt={showSignInPrompt}
+            isSubscribed={false}
+            isLoading={false}
           />
 
           {showSignInPrompt && (
-            <div role="alert" className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
+            <div
+              role="alert"
+              className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4"
+            >
               <p className="font-bold">Sign in required</p>
-              <p>You have reached the limit of free searches. Please sign in to continue.</p>
+              <p>
+                You have reached the limit of free searches. Please sign in to
+                continue.
+              </p>
             </div>
           )}
 
@@ -117,17 +131,26 @@ export default function SignIn() {
           <nav className="mt-6">
             <ul className="flex justify-center space-x-4">
               <li>
-                <Link href="/privacy" className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-200">
+                <Link
+                  href="/privacy"
+                  className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-200"
+                >
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-200">
+                <Link
+                  href="/terms"
+                  className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-200"
+                >
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/resources" className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-200">
+                <Link
+                  href="/resources"
+                  className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-200"
+                >
                   Resources
                 </Link>
               </li>
