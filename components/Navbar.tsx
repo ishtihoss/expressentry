@@ -1,4 +1,4 @@
-import { IconExternalLink, IconMenu2, IconUser } from "@tabler/icons-react";
+import { IconMenu2, IconUser } from "@tabler/icons-react";
 import { FC, useEffect, useState } from "react";
 import { User } from "@supabase/supabase-js";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -8,18 +8,32 @@ export const Navbar: FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [subscription, setSubscription] = useState<any>(null);
   const supabase = useSupabaseClient();
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUserAndSubscription = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
+
+      if (user) {
+        const response = await fetch('/api/subscription', {
+          headers: {
+            'Authorization': `Bearer ${await supabase.auth.getSession().then(res => res.data.session?.access_token)}`
+          }
+        });
+        const data = await response.json();
+        setSubscription(data.subscription);
+      }
     };
 
-    fetchUser();
+    fetchUserAndSubscription();
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
+      if (!session?.user) {
+        setSubscription(null);
+      }
     });
 
     return () => {
@@ -33,6 +47,24 @@ export const Navbar: FC = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setIsDropdownOpen(false);
+  };
+
+  const handleCancelSubscription = async () => {
+    if (confirm("Are you sure you want to cancel your subscription? You will immediately lose access to premium features upon cancellation.")) {
+      const response = await fetch('/api/cancel-subscription', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${await supabase.auth.getSession().then(res => res.data.session?.access_token)}`
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSubscription(data.subscription);
+        alert("Your subscription has been canceled. You no longer have access to premium features.");
+      } else {
+        alert("Failed to cancel subscription. Please try again.");
+      }
+    }
   };
 
   return (
@@ -55,6 +87,14 @@ export const Navbar: FC = () => {
               </button>
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
+                  {subscription && (
+                    <div className="px-4 py-2 text-sm text-gray-700">
+                      <p>Subscription: Active</p>
+                      <button onClick={handleCancelSubscription} className="mt-2 text-red-600 hover:text-red-800">
+                        Cancel Subscription
+                      </button>
+                    </div>
+                  )}
                   <button onClick={handleLogout} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
                     Log out
                   </button>
@@ -66,15 +106,6 @@ export const Navbar: FC = () => {
               Sign In
             </Link>
           )}
-          <a
-            href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center text-white bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md transition-colors duration-200 text-sm font-medium"
-          >
-            <span className="mr-1">Immigrate</span>
-            <IconExternalLink size={16} />
-          </a>
         </div>
         <button onClick={toggleMenu} className="md:hidden text-white focus:outline-none" aria-label="Toggle menu">
           <IconMenu2 size={24} />
@@ -87,6 +118,14 @@ export const Navbar: FC = () => {
           {user && (
             <>
               <span className="block text-white text-sm px-3 py-2">Welcome, {user.user_metadata.full_name || user.email}!</span>
+              {subscription && (
+                <div className="px-3 py-2 text-sm text-white">
+                  <p>Subscription: Active</p>
+                  <button onClick={handleCancelSubscription} className="mt-2 text-red-300 hover:text-red-100">
+                    Cancel Subscription
+                  </button>
+                </div>
+              )}
               <button onClick={handleLogout} className="block text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium w-full text-left">
                 Log out
               </button>
@@ -97,15 +136,6 @@ export const Navbar: FC = () => {
               Sign In
             </Link>
           )}
-          <a
-            href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center text-white bg-green-500 hover:bg-green-600 px-3 py-2 rounded-md transition-colors duration-200 text-sm font-medium"
-          >
-            <span className="mr-1">Immigrate</span>
-            <IconExternalLink size={16} />
-          </a>
         </div>
       )}
     </nav>

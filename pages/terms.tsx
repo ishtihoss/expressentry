@@ -26,6 +26,10 @@ const TermsOfService = () => {
       <h2 className="text-2xl font-bold mb-4">Disclaimer of Warranties</h2>
       <p className="text-lg">
         The AI chatbot is provided &quot;as is&quot; and &quot;as available&quot; without any warranties of any kind, whether express or implied.
+      </p>      
+      <h2 className="text-2xl font-bold mb-4">Termination</h2>
+      <p className="text-lg mb-8">
+        We may terminate or suspend your access to the AI chatbot immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach these Terms of Service. Upon cancellation or termination of your account, you will immediately lose access to all premium features.
       </p>
     </div>
   );
