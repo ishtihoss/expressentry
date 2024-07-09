@@ -46,7 +46,7 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({
   const createSubscription: PayPalButtonsComponentProps["createSubscription"] =
     (data, actions) => {
       return actions.subscription.create({
-        plan_id: process.env.PAYPAL_PLAN_ID || "P-4DV85087F93494849M2GIYBI",
+        plan_id: process.env.PAYPAL_PLAN_ID || "P-48H88330S3536484LM2GTTLI",
         custom_id: user?.id,
       });
     };
@@ -61,7 +61,7 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({
         userId: user?.id,
         orderId: data.orderID,
         subscriptionId: data.subscriptionID,
-        planId: process.env.PAYPAL_PLAN_ID || "P-4DV85087F93494849M2GIYBI",
+        planId: process.env.PAYPAL_PLAN_ID || "P-48H88330S3536484LM2GTTLI",
       }),
     });
     const resData = await res.json();
