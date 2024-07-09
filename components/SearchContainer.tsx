@@ -46,7 +46,7 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({
   const createSubscription: PayPalButtonsComponentProps["createSubscription"] =
     (data, actions) => {
       return actions.subscription.create({
-        plan_id: process.env.PAYPAL_PLAN_ID || "P-48H88330S3536484LM2GTTLI",
+        plan_id: process.env.PAYPAL_PLAN_ID || "P-4DV85087F93494849M2GIYBI", 
         custom_id: user?.id,
       });
     };
@@ -61,7 +61,7 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({
         userId: user?.id,
         orderId: data.orderID,
         subscriptionId: data.subscriptionID,
-        planId: process.env.PAYPAL_PLAN_ID || "P-48H88330S3536484LM2GTTLI",
+        planId: process.env.PAYPAL_PLAN_ID || "P-4DV85087F93494849M2GIYBI",
       }),
     });
     const resData = await res.json();
@@ -99,9 +99,6 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({
               createSubscription={createSubscription}
               onApprove={onApprove}
             />
-            {/* <div className="p-5">
-              <button>Subscribe to paypal</button>
-            </div> */}
           </PayPalScriptProvider>
         )}
       </div>
@@ -124,7 +121,7 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({
         ))}
       </div>
 
-      {remainingQueries !== undefined && (
+      {!isSubscribed && remainingQueries !== undefined && (
         <div className="mt-4">
           <p className="text-sm text-gray-600 mb-2">
             {remainingQueries} free{" "}

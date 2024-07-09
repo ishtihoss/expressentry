@@ -55,15 +55,15 @@ export default function Home() {
   const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
   const [isErrorFeedback, setIsErrorFeedback] = useState(false);
   const [remainingQueries, setRemainingQueries] = useState(0);
+  const [session, setSession] = useState<Session | null>();
+  const [subscription, setSubscription] = useState(null);
 
   const onDrop = useCallback(async (acceptedFiles: any) => {
-    // Do something with the files
     setIsLoadingFeedback(true);
     try {
       console.log("🚀 ~ acceptedFiles:", acceptedFiles);
 
       const formData = new FormData();
-
       formData.append("file", acceptedFiles[0]);
 
       const {
@@ -87,11 +87,10 @@ export default function Home() {
       setIsLoadingFeedback(false);
     }
   }, []);
+
   const { getRootProps, getInputProps, isDragActive, acceptedFiles } =
     useDropzone({ onDrop });
 
-  const [session, setSession] = useState<Session | null>();
-  const [subscription, setSubscription] = useState(null);
   useEffect(() => {
     const getSessionAndSubscription = async () => {
       setIsLoading(true);
@@ -124,17 +123,18 @@ export default function Home() {
 
     console.log("Subscription data:", data);
 
-    setRemainingQueries(20 - data.count < 0 ? 0 : 20 - data.count);
     if (data.isSubscribed) {
       setSubscription(data.subscription);
+      setRemainingQueries(undefined);
     } else {
       setSubscription(null);
+      setRemainingQueries(20 - data.count < 0 ? 0 : 20 - data.count);
     }
   };
 
   useEffect(() => {
     if (user) {
-      resetQueryCount(); // Reset query count when user logs in
+      resetQueryCount();
     }
   }, [user, resetQueryCount]);
 
@@ -250,15 +250,6 @@ export default function Home() {
 
                   <div className="mt-4">
                     <h2 className="text-lg font-semibold mb-2">Feedback</h2>
-                    {/* <p>{feedback}</p> */}
-                    {/* {feedback && feedback.length > 0 && (
-                      <TypeAnimation
-                        sequence={[feedback]}
-                        className="text-sm text-gray-500"
-                        cursor={false}
-                      />
-                    )} */}
-
                     {isLoadingFeedback ? (
                       <div>
                         <p>Loading feedback...</p>
@@ -288,7 +279,7 @@ export default function Home() {
                 answer={answer}
                 loading={loading}
                 error={error}
-                remainingQueries={remainingQueries}
+                remainingQueries={subscription ? undefined : remainingQueries}
                 showSignInPrompt={showSignInPrompt}
                 isSubscribed={subscription !== null}
                 isLoading={isLoading}
