@@ -61,6 +61,8 @@ export const Navbar: FC = () => {
         const data = await response.json();
         setSubscription(data.subscription);
         alert("Your subscription has been canceled. You no longer have access to premium features.");
+        // Refresh the page
+        window.location.reload();
       } else {
         alert("Failed to cancel subscription. Please try again.");
       }

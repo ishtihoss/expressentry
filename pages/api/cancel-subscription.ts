@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 import { supabaseAdmin } from "@/utils";
 import { rateLimiter } from "@/utils/rateLimiter";
+import { cancelPayPalSubscription } from "@/utils/paypalClient";
 import { NextResponse } from "next/server";
 
 export const config = {
@@ -59,7 +60,15 @@ const handler = async (req: Request): Promise<Response> => {
             return NextResponse.json("No active subscription found", { status: 404 });
         }
 
-        // Update the subscription status to 'canceled'
+        // Cancel the subscription with PayPal
+        const paypalCancellationResult = await cancelPayPalSubscription(subscription.subscription_id);
+
+        if (!paypalCancellationResult.success) {
+            console.error("Error cancelling PayPal subscription:", paypalCancellationResult.error);
+            return NextResponse.json("Failed to cancel subscription with PayPal", { status: 500 });
+        }
+
+        // Update the subscription status to 'canceled' in our database
         const { data: updatedSubscription, error: updateError } = await supabaseAdmin
             .from('subscriptions')
             .update({
@@ -71,8 +80,8 @@ const handler = async (req: Request): Promise<Response> => {
             .single();
 
         if (updateError) {
-            console.error("Error updating subscription:", updateError);
-            return NextResponse.json("Failed to cancel subscription", { status: 500 });
+            console.error("Error updating subscription in database:", updateError);
+            return NextResponse.json("Failed to update subscription in database", { status: 500 });
         }
 
         return NextResponse.json({
