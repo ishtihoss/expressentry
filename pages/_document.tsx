@@ -5,13 +5,12 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        <meta name="description" content="Express Entry Search Engine" />
+        <meta name="description" content="Express Entry Search Engine - Get accurate answers to your Express Entry Canada questions instantly" />
         <link rel="icon" href="/favicon.ico" />
         <link
           href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
           rel="stylesheet"
         />
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
       </Head>
       <body>
         <Main />
