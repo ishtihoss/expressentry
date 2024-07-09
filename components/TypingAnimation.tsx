@@ -1,43 +1,59 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
-const TypingAnimation = ({
-  lines,
-  typingSpeed = 50,
-  lineDelay = 1000,
-}: {
+interface TypingAnimationProps {
   lines: string[];
   typingSpeed?: number;
   lineDelay?: number;
+  loop?: boolean;
+}
+
+const TypingAnimation: React.FC<TypingAnimationProps> = ({
+  lines,
+  typingSpeed = 50,
+  lineDelay = 1000,
+  loop = false,
 }) => {
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
+  const [isTyping, setIsTyping] = useState(true);
+
+  const typeNextChar = useCallback(() => {
+    const currentLine = lines[currentLineIndex];
+    if (displayedText.length < currentLine.length) {
+      setDisplayedText(currentLine.slice(0, displayedText.length + 1));
+    } else {
+      setIsTyping(false);
+      setTimeout(() => {
+        if (currentLineIndex < lines.length - 1) {
+          setCurrentLineIndex((prev) => prev + 1);
+          setDisplayedText("");
+          setIsTyping(true);
+        } else if (loop) {
+          setCurrentLineIndex(0);
+          setDisplayedText("");
+          setIsTyping(true);
+        }
+      }, lineDelay);
+    }
+  }, [currentLineIndex, displayedText, lines, lineDelay, loop]);
 
   useEffect(() => {
-    if (currentLineIndex < lines.length) {
-      const line = lines[currentLineIndex];
-      let charIndex = 0;
-
-      const typeNextChar = () => {
-        if (charIndex < line.length) {
-          setDisplayedText((prev) => prev + line[charIndex]);
-          charIndex++;
-          setTimeout(typeNextChar, typingSpeed);
-        } else {
-          setTimeout(() => {
-            setDisplayedText("");
-            setCurrentLineIndex((prev) => prev + 1);
-          }, lineDelay);
-        }
-      };
-
-      typeNextChar();
+    let timer: NodeJS.Timeout;
+    if (isTyping) {
+      timer = setTimeout(typeNextChar, typingSpeed);
     }
-  }, [currentLineIndex, lines, typingSpeed, lineDelay]);
+    return () => clearTimeout(timer);
+  }, [isTyping, typeNextChar, typingSpeed]);
 
   return (
-    <div>
+    <div className="typing-animation">
       {lines.map((line, index) => (
-        <div key={index} className="text-sm text-gray-500 my-5">
+        <div
+          key={index}
+          className={`text-sm ${
+            index === currentLineIndex ? "text-gray-900" : "text-gray-500"
+          } my-2`}
+        >
           {index < currentLineIndex
             ? line
             : index === currentLineIndex

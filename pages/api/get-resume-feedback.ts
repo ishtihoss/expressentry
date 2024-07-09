@@ -71,8 +71,8 @@ const handler = async (req: Request) => {
         console.log("🚀 ~ res:", res);
 
         const assisstant = await openai.beta.assistants.create({
-            name : 'Resume Feedback',
-            instructions : 'Please provide feedback on the resume',
+            name : 'Feedback',
+            instructions : 'Please provide feedback on how to align this document with canada express entry immigration system in under 100 words.',
             model : 'gpt-4o',
             tools : [
                 {
@@ -93,7 +93,7 @@ const handler = async (req: Request) => {
             messages : [
                 {
                     role : 'user',
-                    content : 'I need feedback on my resume',
+                    content : 'I need feedback on this document to improve my chances of getting ITA in Canada express entry program. Keep feedback under 100 words.',
                     attachments : [ 
                         {
                             file_id : openAiFile.id,

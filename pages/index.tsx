@@ -54,7 +54,7 @@ export default function Home() {
   const [feedbackArray, setFeedbackArray] = useState<string[]>([]);
   const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
   const [isErrorFeedback, setIsErrorFeedback] = useState(false);
-  const [remainingQueries, setRemainingQueries] = useState(0);
+  const [remainingQueries, setRemainingQueries] = useState<number | undefined>(0);
   const [session, setSession] = useState<Session | null>();
   const [subscription, setSubscription] = useState(null);
 
@@ -174,7 +174,7 @@ export default function Home() {
       return;
     }
 
-    if (user && !subscription && remainingQueries <= 0) {
+    if (user && !subscription && (remainingQueries ?? 0) <= 0) {
       setShowSignInPrompt(true);
       return;
     }
