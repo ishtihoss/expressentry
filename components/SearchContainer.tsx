@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { SearchBar } from "./SearchBar";
 import { SearchResults } from "./SearchResults";
 import { ExpressEntryChunk } from "@/types";
@@ -33,41 +33,52 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({
   isSubscribed,
   isLoading,
 }) => {
-  console.log("🚀 ~ isSubscribed:", isSubscribed);
   const user = useUser();
   const [searchQuery, setSearchQuery] = useState("");
   const popularTopics = ["FSWP", "FSTP", "CEC", "PNP"];
   const router = useRouter();
 
-  const handleTopicClick = (topic: string) => {
+  const handleTopicClick = useCallback((topic: string) => {
     setSearchQuery(`Tell me about the ${topic} program`);
-  };
+  }, []);
 
-  const createSubscription: PayPalButtonsComponentProps["createSubscription"] =
-    (data, actions) => {
-      return actions.subscription.create({
-        plan_id: process.env.PAYPAL_PLAN_ID || "P-4DV85087F93494849M2GIYBI", 
-        custom_id: user?.id,
-      });
-    };
+  const createSubscription: PayPalButtonsComponentProps["createSubscription"] = useCallback((data, actions) => {
+    // Call the conversion tracking function for subscription conversion
+    if (typeof window !== 'undefined' && window.gtag_report_conversion) {
+      window.gtag_report_conversion('subscription');
+    }
 
-  const onApprove: PayPalButtonsComponentProps["onApprove"] = async (data) => {
-    const res = await fetch("/api/update-user-subscription", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId: user?.id,
-        orderId: data.orderID,
-        subscriptionId: data.subscriptionID,
-        planId: process.env.PAYPAL_PLAN_ID || "P-4DV85087F93494849M2GIYBI",
-      }),
+    return actions.subscription.create({
+      plan_id: process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID || "P-4DV85087F93494849M2GIYBI", 
+      custom_id: user?.id,
     });
-    const resData = await res.json();
-    console.log("Subscription data:", resData);
-    router.reload();
-  };
+  }, [user?.id]);
+
+  const onApprove: PayPalButtonsComponentProps["onApprove"] = useCallback(async (data) => {
+    try {
+      const res = await fetch("/api/update-user-subscription", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user?.id,
+          orderId: data.orderID,
+          subscriptionId: data.subscriptionID,
+          planId: process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID || "P-4DV85087F93494849M2GIYBI",
+        }),
+      });
+      if (!res.ok) {
+        throw new Error('Failed to update subscription');
+      }
+      const resData = await res.json();
+      console.log("Subscription data:", resData);
+      router.reload();
+    } catch (error) {
+      console.error('Error updating subscription:', error);
+      alert('An error occurred while updating your subscription. Please try again or contact support.');
+    }
+  }, [user?.id, router]);
 
   return (
     <div className="w-full bg-white rounded-3xl shadow-2xl overflow-hidden p-8 space-y-6">
@@ -124,8 +135,7 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({
       {!isSubscribed && remainingQueries !== undefined && (
         <div className="mt-4">
           <p className="text-sm text-gray-600 mb-2">
-            {remainingQueries} free{" "}
-            {remainingQueries === 1 ? "query" : "queries"} remaining
+            {remainingQueries} free {remainingQueries === 1 ? "query" : "queries"} remaining
           </p>
 
           <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -161,9 +171,7 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({
         <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-md">
           {error}
           <button
-            onClick={async () => {
-              onSearch(searchQuery);
-            }}
+            onClick={() => onSearch(searchQuery)}
             className="ml-2 underline hover:text-red-800"
           >
             Try again

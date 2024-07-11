@@ -11,10 +11,8 @@ export default function Document() {
           href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
           rel="stylesheet"
         />
-      </Head>
-      <body>
-        <Main />
-        <NextScript />
+        
+        {/* Google tag (gtag.js) */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-11387636261"
           strategy="afterInteractive"
@@ -25,21 +23,34 @@ export default function Document() {
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'AW-11387636261');
-
-            window.gtag_report_conversion = function(url) {
-              var callback = function () {
-                if (typeof(url) != 'undefined') {
-                  window.location = url;
-                }
-              };
+          `}
+        </Script>
+        
+        {/* Conversion tracking functions */}
+        <Script id="conversion-tracking" strategy="afterInteractive">
+          {`
+            window.gtag_report_conversion = function(conversionType) {
+              var eventParams = {};
+              var sendTo = '';
+              
+              if (conversionType === 'default') {
+                sendTo = 'AW-11387636261/01ZGCLj4-7MZEKWUhrYq';
+              } else if (conversionType === 'subscription') {
+                sendTo = 'AW-11387636261/ClBOCOHI3MEZEKWUhrYq';
+                eventParams.transaction_id = ''; // You can set a dynamic transaction ID here if needed
+              }
+              
               gtag('event', 'conversion', {
-                  'send_to': 'AW-11387636261/01ZGCLj4-7MZEKWUhrYq',
-                  'event_callback': callback
+                'send_to': sendTo,
+                ...eventParams
               });
-              return false;
             }
           `}
         </Script>
+      </Head>
+      <body>
+        <Main />
+        <NextScript />
       </body>
     </Html>
   );

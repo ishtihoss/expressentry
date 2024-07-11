@@ -1,6 +1,6 @@
 declare global {
   interface Window {
-    gtag_report_conversion?: () => void;
+    gtag_report_conversion?: (conversionType: string) => void;
   }
 }
 
@@ -14,9 +14,11 @@ const GoogleAuth = () => {
   const supabase = useSupabaseClient();
 
   const handleGoogleSignIn = async () => {
+    // Call the conversion tracking function for default conversion
     if (typeof window !== 'undefined' && window.gtag_report_conversion) {
-      window.gtag_report_conversion();
+      window.gtag_report_conversion('default');
     }
+
     try {
       setLoading(true);
       const { error } = await supabase.auth.signInWithOAuth({
