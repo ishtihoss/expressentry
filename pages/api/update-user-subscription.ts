@@ -73,7 +73,7 @@ const handler = async (req: Request) : Promise<Response> => {
 
           console.log('🚀 ~ orderDetails:', orderDetails);
 
-          if(orderDetails.status !== 'APPORVED') {
+          if(orderDetails.status === 'APPROVED') {
             const subscription = await supabaseAdmin.from('subscriptions').select('*').eq('customer_id', userId).single();
 
             if(subscription.error) {
