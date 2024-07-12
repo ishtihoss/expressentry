@@ -72,7 +72,7 @@ const handler = async (req: Request) => {
 
         const assisstant = await openai.beta.assistants.create({
             name : 'Feedback',
-            instructions : 'Please provide feedback on how to align this document with canada express entry immigration system in under 100 words.',
+            instructions : 'Scan this document and determine if it is a requirement for Canada Express Entry program. If yes, provide feedback on the document. If no, tell the user that this document is not relevant to their express entry application. Provide general feedback that will help with improving their chances of receiving an ITA + feedback on fixing spelling and grammar errors if applicable.',
             model : 'gpt-4o',
             tools : [
                 {
