@@ -26,7 +26,7 @@ const SignInSentinel = () => {
         }`}
       />
       <div className={styles.speechBubble}>
-        <p>Sign in for unlimited queries and full access to all features.</p>
+        <p>Beep! Boop! Sign in for 20 free queries. For unlimited queries subscribe for $5.50 per month. Billed monthly, cancel anytime.</p>
       </div>
     </div>
   );
