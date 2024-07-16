@@ -273,6 +273,7 @@ export default function Home() {
                   </div>
                 </div>
               )}
+
               <SearchContainer
                 onSearch={handleSearch}
                 chunks={chunks}
@@ -285,7 +286,17 @@ export default function Home() {
                 isLoading={isLoading}
               />
             </div>
-
+            {user && subscription && (
+                <div className="mt-4">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => router.push('/express-entry-guide')}
+                  >
+                    Step-by-Step Guide
+                  </button>
+                </div>
+              )}
+            
             {showSignInPrompt && !user && (
               <div className="mt-4 p-4 bg-yellow-100 rounded-md">
                 <p className="text-sm text-yellow-700">
@@ -303,7 +314,7 @@ export default function Home() {
             <ExpressEntryChecklist />
           </div>
         </main>
-
+        
         <Sentinel />
         <Footer />
       </div>
