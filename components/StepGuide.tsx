@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface Task {
   id: number;
@@ -19,18 +19,42 @@ interface StepGuideProps {
 }
 
 export const StepGuide: React.FC<StepGuideProps> = ({ steps, completedTasks, onTaskCompletion, totalTasks }) => {
+  const [progress, setProgress] = useState(0);
+
   const calculateProgress = () => {
     const completedTaskCount = Object.values(completedTasks).flat().length;
     return (completedTaskCount / totalTasks) * 100;
   };
 
+  useEffect(() => {
+    const targetProgress = calculateProgress();
+    const animationDuration = 1000; // 1 second
+    const stepSize = 1;
+    const stepDuration = animationDuration / (targetProgress / stepSize);
+
+    const animateProgress = () => {
+      setProgress(prevProgress => {
+        if (prevProgress < targetProgress) {
+          setTimeout(animateProgress, stepDuration);
+          return Math.min(prevProgress + stepSize, targetProgress);
+        }
+        return prevProgress;
+      });
+    };
+
+    animateProgress();
+  }, [completedTasks, totalTasks]);
+
   return (
     <div className="space-y-8">
-      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+      <div className="relative w-full bg-gray-200 rounded-full h-4 mb-4">
         <div 
-          className="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-in-out" 
-          style={{ width: `${calculateProgress()}%` }}
+          className="absolute top-0 left-0 bg-blue-600 h-full rounded-full transition-all duration-300 ease-in-out"
+          style={{ width: `${progress}%` }}
         ></div>
+        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+          <span className="text-xs font-semibold text-gray-700">{`${Math.round(progress)}%`}</span>
+        </div>
       </div>
       {steps.map((step, stepIndex) => (
         <div key={stepIndex} className="bg-white p-6 rounded-lg shadow-md">
