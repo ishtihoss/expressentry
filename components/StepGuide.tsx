@@ -15,11 +15,23 @@ interface StepGuideProps {
   steps: Step[];
   completedTasks: {[key: number]: number[]};
   onTaskCompletion: (stepIndex: number, taskIndex: number) => void;
+  totalTasks: number;
 }
 
-export const StepGuide: React.FC<StepGuideProps> = ({ steps, completedTasks, onTaskCompletion }) => {
+export const StepGuide: React.FC<StepGuideProps> = ({ steps, completedTasks, onTaskCompletion, totalTasks }) => {
+  const calculateProgress = () => {
+    const completedTaskCount = Object.values(completedTasks).flat().length;
+    return (completedTaskCount / totalTasks) * 100;
+  };
+
   return (
     <div className="space-y-8">
+      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+        <div 
+          className="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-in-out" 
+          style={{ width: `${calculateProgress()}%` }}
+        ></div>
+      </div>
       {steps.map((step, stepIndex) => (
         <div key={stepIndex} className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-4">{step.title}</h2>

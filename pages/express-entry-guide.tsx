@@ -6,6 +6,7 @@ import { StepGuide } from '@/components/StepGuide';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useRouter } from 'next/router';
 
+
 const steps = [
   {
     title: "1. Assess Eligibility",
@@ -104,123 +105,105 @@ const steps = [
 ];
 
 export default function ExpressEntryGuide() {
-    const [isSaving, setIsSaving] = useState(false);
-    const [completedTasks, setCompletedTasks] = useState<{[key: number]: number[]}>({});
-    const [isLoading, setIsLoading] = useState(true);
-    const [subscription, setSubscription] = useState(null);
-    const user = useUser();
-    const supabase = useSupabaseClient();
-    const router = useRouter();
-  
-    useEffect(() => {
-      const checkUserAndSubscription = async () => {
-        if (!user) {
-          router.push('/SignIn');
-          return;
-        }
+  const [isSaving, setIsSaving] = useState(false);
+  const [completedTasks, setCompletedTasks] = useState<{[key: number]: number[]}>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [subscription, setSubscription] = useState(null);
+  const user = useUser();
+  const supabase = useSupabaseClient();
+  const router = useRouter();
 
-        // Check subscription
-        const { data: { session } } = await supabase.auth.getSession();
-        const res = await fetch("/api/subscription", {
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`,
-          },
-        });
-
-        const data = await res.json();
-
-        if (data.isSubscribed) {
-          setSubscription(data.subscription);
-          fetchCompletedTasks();
-        } else {
-          router.push('/');  // Redirect non-subscribers back to home
-        }
-      };
-
-      checkUserAndSubscription();
-    }, [user, router, supabase]);
-  
-    const fetchCompletedTasks = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('completed_tasks')
-          .select('completed_tasks')
-          .eq('user_id', user.id)
-          .single();
-    
-        if (error) throw error;
-    
-        if (data && data.completed_tasks) {
-          setCompletedTasks(data.completed_tasks);
-        } else {
-          setCompletedTasks({});
-        }
-      } catch (error) {
-        console.error('Error fetching completed tasks:', error);
-        setCompletedTasks({});
-      } finally {
-        setIsLoading(false);
+  useEffect(() => {
+    const checkUserAndSubscription = async () => {
+      if (!user) {
+        router.push('/SignIn');
+        return;
       }
-    };
 
-    const handleTaskCompletion = async (stepIndex: number, taskIndex: number) => {
-      if (!user) return;
-    
-      const newCompletedTasks = { ...completedTasks };
-      if (!newCompletedTasks[stepIndex]) {
-        newCompletedTasks[stepIndex] = [];
-      }
-    
-      const taskIndexInArray = newCompletedTasks[stepIndex].indexOf(taskIndex);
-      if (taskIndexInArray > -1) {
-        newCompletedTasks[stepIndex] = newCompletedTasks[stepIndex].filter(index => index !== taskIndex);
+      // Check subscription
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch("/api/subscription", {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (data.isSubscribed) {
+        setSubscription(data.subscription);
+        fetchCompletedTasks();
       } else {
-        newCompletedTasks[stepIndex].push(taskIndex);
-      }
-    
-      setCompletedTasks(newCompletedTasks);
-    
-      try {
-        setIsSaving(true);
-        const { error } = await supabase
-          .from('completed_tasks')
-          .upsert({ 
-            user_id: user.id, 
-            completed_tasks: newCompletedTasks 
-          }, { 
-            onConflict: 'user_id' 
-          });
-    
-        if (error) throw error;
-        console.log("Task completion status updated successfully");
-      } catch (error) {
-        console.error('Error updating completed tasks:', error);
-      } finally {
-        setIsSaving(false);
+        router.push('/');  // Redirect non-subscribers back to home
       }
     };
-    
 
-  const saveProgress = async () => {
-    if (!user) return;
-    setIsSaving(true);
+    checkUserAndSubscription();
+  }, [user, router, supabase]);
+
+  const fetchCompletedTasks = async () => {
     try {
-        const response = await fetch('/api/save-progress', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ completedTasks, userId: user.id }),
-        });
-        if (!response.ok) throw new Error('Failed to save progress');
-        // Optionally show a success message
+      const { data, error } = await supabase
+        .from('completed_tasks')
+        .select('completed_tasks')
+        .eq('user_id', user.id)
+        .single();
+  
+      if (error) throw error;
+  
+      if (data && data.completed_tasks) {
+        setCompletedTasks(data.completed_tasks);
+      } else {
+        setCompletedTasks({});
+      }
     } catch (error) {
-        console.error('Error saving progress:', error);
-        // Optionally show an error message
+      console.error('Error fetching completed tasks:', error);
+      setCompletedTasks({});
     } finally {
-        setIsSaving(false);
+      setIsLoading(false);
     }
-};
+  };
+
+  const handleTaskCompletion = async (stepIndex: number, taskIndex: number) => {
+    if (!user) return;
+  
+    const newCompletedTasks = { ...completedTasks };
+    if (!newCompletedTasks[stepIndex]) {
+      newCompletedTasks[stepIndex] = [];
+    }
+  
+    const taskIndexInArray = newCompletedTasks[stepIndex].indexOf(taskIndex);
+    if (taskIndexInArray > -1) {
+      newCompletedTasks[stepIndex] = newCompletedTasks[stepIndex].filter(index => index !== taskIndex);
+    } else {
+      newCompletedTasks[stepIndex].push(taskIndex);
+    }
+  
+    setCompletedTasks(newCompletedTasks);
+  
+    try {
+      setIsSaving(true);
+      const { error } = await supabase
+        .from('completed_tasks')
+        .upsert({ 
+          user_id: user.id, 
+          completed_tasks: newCompletedTasks 
+        }, { 
+          onConflict: 'user_id' 
+        });
+  
+      if (error) throw error;
+      console.log("Task completion status updated successfully");
+    } catch (error) {
+      console.error('Error updating completed tasks:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  
+  const calculateTotalTasks = () => {
+    return steps.reduce((total, step) => total + step.tasks.length, 0);
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -245,7 +228,12 @@ export default function ExpressEntryGuide() {
         <main className="flex-grow p-4">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
             <h1 className="text-3xl font-bold mb-8 text-center">Express Entry Interactive Guide</h1>
-            <StepGuide steps={steps} completedTasks={completedTasks} onTaskCompletion={handleTaskCompletion} />
+            <StepGuide 
+              steps={steps} 
+              completedTasks={completedTasks} 
+              onTaskCompletion={handleTaskCompletion} 
+              totalTasks={calculateTotalTasks()}
+            />
           </div>
         </main>
 
