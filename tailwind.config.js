@@ -23,6 +23,7 @@ module.exports = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(var(--tw-gradient-stops))',
         'fiberglass': 'linear-gradient(to right, var(--tw-gradient-stops))',
+        'checkerboard-white-black': 'repeating-conic-gradient(#fff 0% 25%, #000 0% 50%) 50% / 8px 8px',
       },
       gradientColorStops: theme => ({
         ...theme('colors'),
