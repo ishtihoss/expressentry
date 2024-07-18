@@ -19,7 +19,7 @@ export const OpenAIStream = async (prompt: string): Promise<string> => {
   try {
     console.log('Calling OpenAI API with prompt:', prompt);
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
