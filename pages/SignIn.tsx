@@ -12,7 +12,7 @@ export default function SignIn() {
   const router = useRouter();
   const supabase = useSupabaseClient();
   const { chunks, answer, loading, error, handleSearch } = useSearch();
-  const [queryCount, setQueryCount] = useState(0);
+  const [queryCount, setQueryCount] = useState<number | null>(null);
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
 
   useEffect(() => {
@@ -23,14 +23,13 @@ export default function SignIn() {
       if (session) {
         router.push("/");
       } else {
-        // Fetch query count for anonymous user
         try {
           const response = await fetch("/api/user-stats?userId=anonymous");
           const data = await response.json();
           setQueryCount(data.queryCount);
         } catch (error) {
           console.error("Error fetching user stats:", error);
-          // If there's an error, we keep the initial count of 0
+          setQueryCount(0); // Set to 0 if there's an error
         }
       }
     };
@@ -59,7 +58,7 @@ export default function SignIn() {
   };
 
   const handleLimitedSearch = async (searchQuery: string) => {
-    if (queryCount >= 3) {
+    if (queryCount !== null && queryCount >= 3) {
       setShowSignInPrompt(true);
       return;
     }
@@ -68,7 +67,7 @@ export default function SignIn() {
     await handleSearch(searchQuery);
   };
 
-  const remainingQueries = Math.max(0, 3 - queryCount);
+  const remainingQueries = queryCount === null ? 3 : Math.max(0, 3 - queryCount);
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-500 to-green-500 p-4 flex flex-col items-center justify-center relative">
