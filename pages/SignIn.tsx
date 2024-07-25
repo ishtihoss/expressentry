@@ -24,9 +24,14 @@ export default function SignIn() {
         router.push("/");
       } else {
         // Fetch query count for anonymous user
-        const response = await fetch("/api/user-stats?userId=anonymous");
-        const data = await response.json();
-        setQueryCount(data.queryCount);
+        try {
+          const response = await fetch("/api/user-stats?userId=anonymous");
+          const data = await response.json();
+          setQueryCount(data.queryCount);
+        } catch (error) {
+          console.error("Error fetching user stats:", error);
+          // If there's an error, we keep the initial count of 0
+        }
       }
     };
     checkSession();
