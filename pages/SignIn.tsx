@@ -22,21 +22,15 @@ export default function SignIn() {
       } = await supabase.auth.getSession();
       if (session) {
         router.push("/");
+      } else {
+        // Fetch query count for anonymous user
+        const response = await fetch("/api/user-stats?userId=anonymous");
+        const data = await response.json();
+        setQueryCount(data.queryCount);
       }
     };
     checkSession();
-
-    const storedCount = localStorage.getItem("queryCount");
-    if (storedCount) {
-      setQueryCount(parseInt(storedCount, 10));
-    }
   }, [supabase.auth, router]);
-
-  const incrementQueryCount = () => {
-    const newCount = queryCount + 1;
-    setQueryCount(newCount);
-    localStorage.setItem("queryCount", newCount.toString());
-  };
 
   const saveQuery = async (searchQuery: string) => {
     try {
@@ -51,6 +45,9 @@ export default function SignIn() {
       if (!response.ok) {
         throw new Error("Failed to save query");
       }
+
+      const data = await response.json();
+      setQueryCount(data.queryCount);
     } catch (error) {
       console.error("Error saving query:", error);
     }
@@ -62,12 +59,11 @@ export default function SignIn() {
       return;
     }
 
-    incrementQueryCount();
     await saveQuery(searchQuery);
     await handleSearch(searchQuery);
   };
 
-  const remainingQueries = 3 - queryCount;
+  const remainingQueries = Math.max(0, 3 - queryCount);
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-500 to-green-500 p-4 flex flex-col items-center justify-center relative">

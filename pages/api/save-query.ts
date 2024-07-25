@@ -20,18 +20,22 @@ export default async function handler(
 
   const { query, userId } = req.body;
 
-  if (!query || !userId) {
-    return res.status(400).json({ message: "Query and userId are required" });
+  if (!query) {
+    return res.status(400).json({ message: "Query is required" });
   }
 
   try {
-    const tableName = userId === 'anonymous' ? 'anonymous_queries' : 'user_queries';
+    const isAnonymous = !userId || userId === 'anonymous';
+    const tableName = isAnonymous ? 'anonymous_queries' : 'user_queries';
     
-    // Get the current max query_count for the user or anonymous
+    // Get the IP address for anonymous users
+    const ipAddress = isAnonymous ? req.headers['x-forwarded-for'] || req.socket.remoteAddress : null;
+    
+    // Get the current max query_count for the user or IP address
     const { data: maxCountData, error: maxCountError } = await supabase
       .from(tableName)
       .select('query_count')
-      .eq('user_id', userId)
+      .eq('user_id', isAnonymous ? ipAddress : userId)
       .order('query_count', { ascending: false })
       .limit(1)
       .single();
@@ -46,7 +50,7 @@ export default async function handler(
     // Save the query with the incremented count
     const { data: savedQuery, error: saveError } = await supabase
       .from(tableName)
-      .insert({ user_id: userId, query, query_count: newQueryCount });
+      .insert({ user_id: isAnonymous ? ipAddress : userId, query, query_count: newQueryCount });
 
     if (saveError) {
       console.error("Error saving query:", saveError);

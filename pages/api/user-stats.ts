@@ -22,10 +22,16 @@ export default async function handler(
     }
 
     try {
+      const isAnonymous = userId === 'anonymous';
+      const tableName = isAnonymous ? 'anonymous_queries' : 'user_queries';
+      
+      // Get the IP address for anonymous users
+      const ipAddress = isAnonymous ? req.headers['x-forwarded-for'] || req.socket.remoteAddress : null;
+
       const { data, error } = await supabase
-        .from("user_queries")
+        .from(tableName)
         .select("query_count")
-        .eq("user_id", userId)
+        .eq("user_id", isAnonymous ? ipAddress : userId)
         .order('query_count', { ascending: false })
         .limit(1)
         .single();
