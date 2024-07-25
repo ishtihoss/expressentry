@@ -12,11 +12,13 @@ export default function SignIn() {
   const router = useRouter();
   const supabase = useSupabaseClient();
   const { chunks, answer, loading, error, handleSearch } = useSearch();
-  const [queryCount, setQueryCount] = useState<number | null>(null);
+  const [queryCount, setQueryCount] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(true);
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
 
   useEffect(() => {
     const checkSession = async () => {
+      setIsLoading(true);
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -26,12 +28,13 @@ export default function SignIn() {
         try {
           const response = await fetch("/api/user-stats?userId=anonymous");
           const data = await response.json();
-          setQueryCount(data.queryCount);
+          setQueryCount(typeof data.queryCount === 'number' ? data.queryCount : 0);
         } catch (error) {
           console.error("Error fetching user stats:", error);
-          setQueryCount(0); // Set to 0 if there's an error
+          setQueryCount(0);
         }
       }
+      setIsLoading(false);
     };
     checkSession();
   }, [supabase.auth, router]);
@@ -58,7 +61,7 @@ export default function SignIn() {
   };
 
   const handleLimitedSearch = async (searchQuery: string) => {
-    if (queryCount !== null && queryCount >= 3) {
+    if (queryCount >= 3) {
       setShowSignInPrompt(true);
       return;
     }
@@ -67,7 +70,11 @@ export default function SignIn() {
     await handleSearch(searchQuery);
   };
 
-  const remainingQueries = queryCount === null ? 3 : Math.max(0, 3 - queryCount);
+  const remainingQueries = Math.max(0, 3 - queryCount);
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Or a more sophisticated loading component
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-500 to-green-500 p-4 flex flex-col items-center justify-center relative">
