@@ -16,7 +16,6 @@ import Sentinel from "@/components/Sentinel";
 import { SubscribeButton } from "@/components/SubscribeButton";
 import { useSearch } from "@/hooks/useSearch";
 import { useSettings } from "@/hooks/useSettings";
-import { useQueryCount } from "@/hooks/useQueryCount";
 import {
   Session,
   createPagesBrowserClient,
@@ -46,7 +45,6 @@ export default function Home() {
   const router = useRouter();
   const user = useUser();
   const supabase = useSupabaseClient();
-  const { queryCount, incrementQueryCount, resetQueryCount } = useQueryCount();
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
   const [supabaseClient] = useState(() => createPagesBrowserClient());
   const [isLoading, setIsLoading] = useState(false);
@@ -128,15 +126,9 @@ export default function Home() {
       setRemainingQueries(undefined);
     } else {
       setSubscription(null);
-      setRemainingQueries(20 - data.count < 0 ? 0 : 20 - data.count);
+      setRemainingQueries(3 - data.count < 0 ? 0 : 3 - data.count);
     }
   };
-
-  useEffect(() => {
-    if (user) {
-      resetQueryCount();
-    }
-  }, [user, resetQueryCount]);
 
   const handleSubscribe = () => {
     router.push("/subscribe");
@@ -169,10 +161,6 @@ export default function Home() {
   const handleSearch = async (searchQuery: string) => {
     setShowSignInPrompt(false);
 
-    if (!user && queryCount >= 3) {
-      setShowSignInPrompt(true);
-      return;
-    }
 
     if (user && !subscription && (remainingQueries ?? 0) <= 0) {
       setShowSignInPrompt(true);
@@ -181,9 +169,6 @@ export default function Home() {
 
     await saveQuery(searchQuery);
 
-    if (!user) {
-      incrementQueryCount();
-    }
 
     if (user && !subscription) {
       await getSubscription();
