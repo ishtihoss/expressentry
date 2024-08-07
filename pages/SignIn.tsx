@@ -61,7 +61,7 @@ export default function SignIn() {
   };
 
   const handleLimitedSearch = async (searchQuery: string) => {
-    if (queryCount >= 3) {
+    if (queryCount >= 1) {
       setShowSignInPrompt(true);
       return;
     }
@@ -70,7 +70,7 @@ export default function SignIn() {
     await handleSearch(searchQuery);
   };
 
-  const remainingQueries = Math.max(0, 3 - queryCount);
+  const remainingQueries = Math.max(0, 1 - queryCount);
 
   if (isLoading) {
     return <div>Loading...</div>; // Or a more sophisticated loading component
