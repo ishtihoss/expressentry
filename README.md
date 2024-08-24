@@ -20,4 +20,4 @@ This project is a chatbot designed to assist users with information related to E
 This project is licensed under a proprietary license. See the license file for more details. 
 
 
-//give me full rewrite of each file one response at a time starting with the most independent file to least independent to prevent recursive coding
+
