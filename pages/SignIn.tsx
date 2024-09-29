@@ -12,7 +12,6 @@ export default function SignIn() {
   const router = useRouter();
   const supabase = useSupabaseClient();
   const { chunks, answer, loading, error, handleSearch } = useSearch();
-  const [queryCount, setQueryCount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
 
@@ -24,53 +23,15 @@ export default function SignIn() {
       } = await supabase.auth.getSession();
       if (session) {
         router.push("/");
-      } else {
-        try {
-          const response = await fetch("/api/user-stats?userId=anonymous");
-          const data = await response.json();
-          setQueryCount(typeof data.queryCount === 'number' ? data.queryCount : 0);
-        } catch (error) {
-          console.error("Error fetching user stats:", error);
-          setQueryCount(0);
-        }
       }
       setIsLoading(false);
     };
     checkSession();
   }, [supabase.auth, router]);
 
-  const saveQuery = async (searchQuery: string) => {
-    try {
-      const response = await fetch("/api/save-query", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query: searchQuery, userId: "anonymous" }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to save query");
-      }
-
-      const data = await response.json();
-      setQueryCount(data.queryCount);
-    } catch (error) {
-      console.error("Error saving query:", error);
-    }
-  };
-
   const handleLimitedSearch = async (searchQuery: string) => {
-    if (queryCount >= 1) {
-      setShowSignInPrompt(true);
-      return;
-    }
-
-    await saveQuery(searchQuery);
-    await handleSearch(searchQuery);
+    setShowSignInPrompt(true);
   };
-
-  const remainingQueries = Math.max(0, 1 - queryCount);
 
   if (isLoading) {
     return <div>Loading...</div>; // Or a more sophisticated loading component
@@ -94,20 +55,12 @@ export default function SignIn() {
         </h1>
 
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden p-8 space-y-6">
-          <div className="text-center mb-4">
-            <p className="text-lg font-semibold text-blue-600">
-              Remaining free searches:{" "}
-              <span className="text-2xl">{remainingQueries}</span>
-            </p>
-          </div>
-
           <SearchContainer
             onSearch={handleLimitedSearch}
             chunks={chunks}
             answer={answer}
             loading={loading}
-            error={error}
-            remainingQueries={remainingQueries}
+            error={error ? "Please sign in to use the search functionality." : null}
             showSignInPrompt={showSignInPrompt}
             isSubscribed={false}
             isLoading={false}
@@ -116,12 +69,11 @@ export default function SignIn() {
           {showSignInPrompt && (
             <div
               role="alert"
-              className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4"
+              className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4"
             >
               <p className="font-bold">Sign in required</p>
               <p>
-                You have reached the limit of free searches. Please sign in to
-                continue.
+                To access our powerful search engine and get personalized results, please sign in using your Google account.
               </p>
             </div>
           )}
@@ -130,7 +82,7 @@ export default function SignIn() {
             Sign In for Full Access
           </h2>
           <p className="text-center text-gray-600">
-            Sign in to unlock unlimited searches and personalized results.
+            Unlock unlimited searches and personalized results by signing in with your Google account.
           </p>
           <div className="flex justify-center">
             <GoogleAuth />
